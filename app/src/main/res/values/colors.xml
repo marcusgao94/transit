@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="attraction_des">#BBDEFB</color>
+    <color name="attraction_address">#2196F3</color>
+    <color name="attraction_website">#0D47A1</color>
+
+    <color name="english_color">#03A9F4</color>
+    <color name="finnish_color">#FFA000</color>
+
+    <color name="route_name">#1E88E5</color>
+    <color name="left_minutes">#607D8B</color>
+    <color name="routes">#795548</color>
+</resources>

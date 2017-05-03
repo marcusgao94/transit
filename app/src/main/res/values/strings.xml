@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">BusTracker</string>
+    <string name="start">From</string>
+    <string name="end">To</string>
+    <string name="search">Search</string>
+    <string name="default_msg">Please Input Your Search Items</string>
+    <string name="stop_id">Type a stop station id</string>
+    <string name="no_result">No results found</string>
+    <string name="depart_time">Depart Time</string>
+    <string name="depart_date">Depart Date</string>
+</resources>

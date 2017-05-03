@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id = "@+id/busList"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/route_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/route_name"
+        android:textSize="16sp" />
+
+
+    <TextView
+        android:id="@+id/routes"
+        style="@style/bookInfo"
+        android:textColor="@color/routes"/>
+
+    <TextView
+        android:id="@+id/route_color"
+        style="@style/bookInfo"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:textColor="@color/left_minutes"/>
+
+    <!--<TextView-->
+        <!--android:id="@+id/publisher"-->
+        <!--style="@style/bookInfo"-->
+        <!--android:textColor="@color/author_color"/>-->
+
+
+
+</LinearLayout>
