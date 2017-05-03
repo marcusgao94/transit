@@ -14,7 +14,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
@@ -46,9 +45,9 @@ public class MainActivity extends FragmentActivity
         GoogleApiClient.ConnectionCallbacks
 {
 
-    private static String USGS_REQUEST_URL = "http://realtime.portauthority.org/bustime/api/v1/";
+    private static String USGS_REQUEST_URL = "https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyAEBBlM76YfcI7of-9Q5UkTM2O_NBjGaNw";
     // The API key.
-    private static String key = "key=KyHJrRc6RRPfHbpfa2JFTaewp";
+//    private static String key = "key=KyHJrRc6RRPfHbpfa2JFTaewp";
     // the operation is to get predictions.
     private static String prediction = "getpredictions?";
     // the operation is to get routes
@@ -79,21 +78,21 @@ public class MainActivity extends FragmentActivity
         Log.i(LOG_TAG, "OnCreate is called");
         /**After press the search button, the list of buses will be displayed on the screen. */
         final Button searchButton = (Button)findViewById(R.id.search_button);
-        //listView = (ListView) findViewById(R.id.list_view);
+        listView = (ListView) findViewById(R.id.list_view);
         final Button departTiButton = (Button) findViewById(R.id.depart_time);
-        departTiButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showTimePickerDialog(view);
-            }
-        });
-        final Button departDaButton = (Button) findViewById(R.id.depart_date);
-        departDaButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDatePickerDialog(view);
-            }
-        });
+//        departTiButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                showTimePickerDialog(view);
+//            }
+//        });
+//        final Button departDaButton = (Button) findViewById(R.id.depart_date);
+//        departDaButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                showDatePickerDialog(view);
+//            }
+//        });
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -207,8 +206,9 @@ public class MainActivity extends FragmentActivity
             end_name = (EditText)findViewById(R.id.type_end);
             //stop_id = (EditText)findViewById(R.id.stop_id);
             //typeName = stop_id.getText().toString().replace(" ","+");
-            url = USGS_REQUEST_URL + routes + key;
-            Toast.makeText(MainActivity.this, "URL : " + url, Toast.LENGTH_SHORT).show();
+//            url = USGS_REQUEST_URL + routes;
+            url = "https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyAEBBlM76YfcI7of-9Q5UkTM2O_NBjGaNw&origin=amberson%20plaze+Pittsburgh&destination=carnegie%20mellon%20university+pittsburgh&mode=transit&transit_mode=bus";
+//            Toast.makeText(MainActivity.this, "URL : " + url, Toast.LENGTH_SHORT).show();
             DyfiAsyncTask dyfi = new DyfiAsyncTask();
             dyfi.execute(url);
 //            if (typeName.isEmpty()) {
@@ -228,7 +228,7 @@ public class MainActivity extends FragmentActivity
      */
     private void updateUi(List<BusInfo> lists) {
         adapter = new BusInfoAdapter(this, lists);
-        // listView.setAdapter(adapter);
+         listView.setAdapter(adapter);
 
     }
 

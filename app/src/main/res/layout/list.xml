@@ -7,29 +7,24 @@
 
 
     <TextView
-        android:id="@+id/route_name"
+        android:id="@+id/departTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/route_name"
+        android:textColor="@color/departTime"
         android:textSize="16sp" />
 
 
     <TextView
-        android:id="@+id/routes"
+        android:id="@+id/arrivalTime"
         style="@style/bookInfo"
-        android:textColor="@color/routes"/>
+        android:textColor="@color/ArrivalTime"/>
 
     <TextView
-        android:id="@+id/route_color"
+        android:id="@+id/bus_Num"
         style="@style/bookInfo"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:textColor="@color/left_minutes"/>
-
-    <!--<TextView-->
-        <!--android:id="@+id/publisher"-->
-        <!--style="@style/bookInfo"-->
-        <!--android:textColor="@color/author_color"/>-->
+        android:textColor="@color/bus_Num"/>
 
 
 

@@ -10,18 +10,36 @@ public class BusInfo {
     private String rt;
     private String rtdir;
     // route name
-    private String rtnm;
+    private String routeNum;
     // route color
     private String rtclr;
     private int stpid;
     private int vid;
 
-    public String getRtnm() {
-        return rtnm;
+    public String getStartTime() {
+        return startTime;
     }
 
-    public void setRtnm(String rtnm) {
-        this.rtnm = rtnm;
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    private String startTime, endTime;
+
+    public String getRouteNum() {
+        return routeNum;
+    }
+
+    public void setRouteNum(String routeNum) {
+        this.routeNum = routeNum;
     }
 
     public String getRtclr() {
@@ -118,10 +136,10 @@ public class BusInfo {
     }
 
     private String des;
-    public BusInfo(String rtnm, String rt, String rtclr){
-        this.rtnm = rtnm;
-        this.rt = rt;
-        this.rtclr = rtclr;
+    public BusInfo(String startTime, String endTime, String routeNum){
+        this.routeNum = routeNum;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
 }

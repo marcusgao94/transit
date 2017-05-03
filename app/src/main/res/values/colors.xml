@@ -11,7 +11,7 @@
     <color name="english_color">#03A9F4</color>
     <color name="finnish_color">#FFA000</color>
 
-    <color name="route_name">#1E88E5</color>
-    <color name="left_minutes">#607D8B</color>
-    <color name="routes">#795548</color>
+    <color name="departTime">#1E88E5</color>
+    <color name="ArrivalTime">#607D8B</color>
+    <color name="bus_Num">#795548</color>
 </resources>

@@ -31,14 +31,14 @@ public class BusInfoAdapter extends ArrayAdapter<BusInfo>{
         Log.i(LOG_TAG, "until here + get position :" + position);
         BusInfo currentBus = getItem(position);
         Log.i(LOG_TAG, "until here + after position");
-        TextView routeName = (TextView) listView.findViewById(R.id.route_name);
-        routeName.setText(currentBus.getRtnm() + "");
+        TextView routeName = (TextView) listView.findViewById(R.id.departTime);
+        routeName.setText(currentBus.getStartTime() + "");
 
-        TextView routes = (TextView) listView.findViewById(R.id.routes);
-        routes.setText(currentBus.getRt() + "");
+        TextView routes = (TextView) listView.findViewById(R.id.arrivalTime);
+        routes.setText(currentBus.getEndTime() + "");
 
-        TextView routeColor = (TextView) listView.findViewById(R.id.route_color);
-        routeColor.setText(currentBus.getRtclr()+ "");
+        TextView routeNum = (TextView) listView.findViewById(R.id.bus_Num);
+        routeNum.setText(currentBus.getRouteNum() + "");
 //        TextView busName = (TextView) listView.findViewById(R.id.bus_name);
 //        busName.setText(currentBus.getLatitude() + "");
 

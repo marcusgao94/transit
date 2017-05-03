@@ -3,14 +3,11 @@ package com.example.android.bustracker;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,10 +16,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Created by yishuyan on 9/14/16.
@@ -41,50 +34,43 @@ public final class QueryUtils {
 
 
         URL url = createUrl(requestUrl);
-        String busXML = null;
+        String busJSON = null;
         try {
-            busXML = makeHttpRequest(url);
+            busJSON = makeHttpRequest(url);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error closing input stream", e);
         }
-        if (TextUtils.isEmpty(busXML)) {
+        if (TextUtils.isEmpty(busJSON)) {
             return null;
         }
-        DocumentBuilder newDocumentBuilder = null;
         try {
-            newDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document doc = newDocumentBuilder.parse(new ByteArrayInputStream(busXML.getBytes()));
-            doc.getDocumentElement().normalize();
-            Log.i(LOG_TAG, "Root element :" + doc.getDocumentElement().getNodeName());
-//            System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-            // get all child nodes
-            NodeList nList = doc.getElementsByTagName("route");
-            for (int temp = 0; temp < nList.getLength(); temp++) {
-
-                Node nNode = nList.item(temp);
-                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-
-                    Element eElement = (Element) nNode;
-                    String rtnm = eElement.getElementsByTagName("rtnm").item(0).getTextContent();
-                    String rt = eElement.getElementsByTagName("rt").item(0).getTextContent();
-                    String rtclr = eElement.getElementsByTagName("rtclr").item(0).getTextContent();
-                    BusInfo tempBus = new BusInfo(rtnm, rt, rtclr);
-                    busList.add(tempBus);
-                    Log.i(LOG_TAG, "route name : " + eElement.getElementsByTagName("rtnm").item(0).getTextContent());
-//                    System.out.println("route name : " + eElement.getElementsByTagName("rtnm").item(0).getTextContent());
-                    Log.i(LOG_TAG, "route number : " + eElement.getElementsByTagName("rt").item(0).getTextContent());
-                    Log.i(LOG_TAG, "route color : " + eElement.getElementsByTagName("rtclr").item(0).getTextContent());
-
+            JSONObject baseJsonResponse = new JSONObject(busJSON);
+            JSONArray routeArray = (JSONArray) baseJsonResponse.get("routes");
+            for (int i = 0; i < routeArray.length(); i ++) {
+                JSONObject tempObject = (JSONObject) routeArray.get(0);
+                JSONArray legsObject = (JSONArray) tempObject.get("legs");
+                JSONObject tempObject2 = (JSONObject) legsObject.get(0);
+                JSONObject arrivalObject = (JSONObject) tempObject2.get("arrival_time");
+                String arrival_Time = (String) arrivalObject.get("text");
+                System.out.println("arrival_time :" + arrival_Time);
+                JSONObject departureObject =  (JSONObject) tempObject2.get("departure_time");
+                String departure_Time = (String) departureObject.get("text");
+                System.out.println("depart_time : " + departure_Time);
+                JSONArray stepsArray = (JSONArray) tempObject2.get("steps");
+                for (int j = 0; j < stepsArray.length(); j ++) {
+                    JSONObject tempStepObject = (JSONObject) stepsArray.get(j);
+                    String mode = (String) tempStepObject.get("travel_mode");
+                    if (mode.equals("TRANSIT")) {
+                        JSONObject transitObject = (JSONObject) tempStepObject.get("transit_details");
+                        JSONObject lineObject = (JSONObject) transitObject.get("line");
+                        String stationName = (String) lineObject.get("short_name");
+                        System.out.println("bus name : " + stationName);
+                    }
                 }
             }
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-
 
         return busList;
     }
