@@ -4,11 +4,16 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -21,11 +26,24 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends FragmentActivity
+        implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,
+        GoogleApiClient.ConnectionCallbacks
 {
 
     private static String USGS_REQUEST_URL = "http://realtime.portauthority.org/bustime/api/v1/";
@@ -48,6 +66,10 @@ public class MainActivity extends AppCompatActivity
 
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
+    private GoogleMap mMap;
+    private GoogleApiClient googleApiClient;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +79,7 @@ public class MainActivity extends AppCompatActivity
         Log.i(LOG_TAG, "OnCreate is called");
         /**After press the search button, the list of buses will be displayed on the screen. */
         final Button searchButton = (Button)findViewById(R.id.search_button);
-        listView = (ListView) findViewById(R.id.list_view);
+        //listView = (ListView) findViewById(R.id.list_view);
         final Button departTiButton = (Button) findViewById(R.id.depart_time);
         departTiButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,10 +100,69 @@ public class MainActivity extends AppCompatActivity
                 searchClicked();
             }
         });
-        emptyTextView = (TextView)findViewById(R.id.empty_view);
-        listView.setEmptyView(emptyTextView);
+        //emptyTextView = (TextView)findViewById(R.id.empty_view);
+        // listView.setEmptyView(emptyTextView);
 
 
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addConnectionCallbacks(this)
+                .addApi(LocationServices.API)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .build();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        boolean mLocationPermissionGranted;
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mLocationPermissionGranted = true;
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+
+//        LocationRequest lr = LocationRequest.create();
+//        LocationServices.FusedLocationApi.requestLocationUpdates(
+//                googleApiClient, lr, this);
+
+        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        System.out.println("\n\n\nlocation : " + location);
+
+//        mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),
+//                location.getLongitude()), 15));
+
+        // Add a marker in Sydney and move the camera
+        LatLng sydney = new LatLng(-34, 151);
+        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15));
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        Log.d(LOG_TAG, "Play services connection failed");
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        // Build the map.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        Log.d(LOG_TAG, "Play services connection suspended");
     }
 
 
@@ -124,8 +205,8 @@ public class MainActivity extends AppCompatActivity
             Log.i(LOG_TAG, "Connected");
             start_name = (EditText)findViewById(R.id.type_start);
             end_name = (EditText)findViewById(R.id.type_end);
-            stop_id = (EditText)findViewById(R.id.stop_id);
-            typeName = stop_id.getText().toString().replace(" ","+");
+            //stop_id = (EditText)findViewById(R.id.stop_id);
+            //typeName = stop_id.getText().toString().replace(" ","+");
             url = USGS_REQUEST_URL + routes + key;
             Toast.makeText(MainActivity.this, "URL : " + url, Toast.LENGTH_SHORT).show();
             DyfiAsyncTask dyfi = new DyfiAsyncTask();
@@ -147,7 +228,7 @@ public class MainActivity extends AppCompatActivity
      */
     private void updateUi(List<BusInfo> lists) {
         adapter = new BusInfoAdapter(this, lists);
-        listView.setAdapter(adapter);
+        // listView.setAdapter(adapter);
 
     }
 

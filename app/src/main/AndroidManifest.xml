@@ -6,7 +6,6 @@
     <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-sdk android:minSdkVersion="14" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
@@ -23,6 +22,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAEBBlM76YfcI7of-9Q5UkTM2O_NBjGaNw"/>
     </application>
 
 </manifest>
