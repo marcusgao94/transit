@@ -47,6 +47,7 @@ public final class QueryUtils {
             JSONObject baseJsonResponse = new JSONObject(busJSON);
             JSONArray routeArray = (JSONArray) baseJsonResponse.get("routes");
             for (int i = 0; i < routeArray.length(); i ++) {
+
                 JSONObject tempObject = (JSONObject) routeArray.get(0);
                 JSONArray legsObject = (JSONArray) tempObject.get("legs");
                 JSONObject tempObject2 = (JSONObject) legsObject.get(0);
@@ -56,6 +57,7 @@ public final class QueryUtils {
                 JSONObject departureObject =  (JSONObject) tempObject2.get("departure_time");
                 String departure_Time = (String) departureObject.get("text");
                 System.out.println("depart_time : " + departure_Time);
+
                 JSONArray stepsArray = (JSONArray) tempObject2.get("steps");
                 for (int j = 0; j < stepsArray.length(); j ++) {
                     JSONObject tempStepObject = (JSONObject) stepsArray.get(j);
@@ -63,9 +65,12 @@ public final class QueryUtils {
                     if (mode.equals("TRANSIT")) {
                         JSONObject transitObject = (JSONObject) tempStepObject.get("transit_details");
                         JSONObject lineObject = (JSONObject) transitObject.get("line");
-                        String stationName = (String) lineObject.get("short_name");
-                        System.out.println("bus name : " + stationName);
+                        String routeName = (String) lineObject.get("short_name");
+                        System.out.println("bus name : " + routeName);
+                        BusInfo busInfo = new BusInfo(departure_Time, arrival_Time, routeName);
+                        busList.add(busInfo);
                     }
+
                 }
             }
         } catch (JSONException e) {

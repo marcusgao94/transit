@@ -293,12 +293,16 @@ public class MainActivity extends FragmentActivity
         if (isConnectedNetwork(this)) {
             Log.i(LOG_TAG, "Connected");
             start_name = (EditText)findViewById(R.id.type_start);
+            String start_place = start_name.getText().toString().replace(" ", "+");
             end_name = (EditText)findViewById(R.id.type_end);
+            String end_place = end_name.getText().toString().replace(" ", "+");
             //stop_id = (EditText)findViewById(R.id.stop_id);
             //typeName = stop_id.getText().toString().replace(" ","+");
 //            url = USGS_REQUEST_URL + routes;
-            url = "https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyAEBBlM76YfcI7of-9Q5UkTM2O_NBjGaNw&origin=amberson%20plaze+Pittsburgh&destination=carnegie%20mellon%20university+pittsburgh&mode=transit&transit_mode=bus";
-//            Toast.makeText(MainActivity.this, "URL : " + url, Toast.LENGTH_SHORT).show();
+            url = "https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyAEBBlM76YfcI7of-9Q5UkTM2O_NBjGaNw&origin="
+            + start_place + "+Pittsburgh&destination=" + end_place + "+Pittsburgh&mode=transit&transit_mode=bus";
+            Toast.makeText(MainActivity.this, "URL : " + url, Toast.LENGTH_LONG).show();
+            System.out.println("url : " + url);
             DyfiAsyncTask dyfi = new DyfiAsyncTask();
             dyfi.execute(url);
 //            if (typeName.isEmpty()) {
