@@ -224,6 +224,9 @@ public class MainActivity extends FragmentActivity
 
         // Set the map's camera position to the current location of the device.
         if (mLastKnownLocation != null) {
+            mMap.addMarker(new MarkerOptions().position(
+                    new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude()))
+                    .title("Team Six's here ^_^"));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(mLastKnownLocation.getLatitude(),
                             mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
