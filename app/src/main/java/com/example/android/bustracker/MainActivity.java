@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.ConnectivityManager;
@@ -19,6 +20,7 @@ import android.text.Layout;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -51,14 +53,8 @@ public class MainActivity extends FragmentActivity
         GoogleApiClient.ConnectionCallbacks, LocationListener {
 
     private static String USGS_REQUEST_URL = "https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyAEBBlM76YfcI7of-9Q5UkTM2O_NBjGaNw";
-    // The API key.
-//    private static String key = "key=KyHJrRc6RRPfHbpfa2JFTaewp";
-    // the operation is to get predictions.
-    private static String prediction = "getpredictions?";
-    // the operation is to get routes
-    private static String routes = "getroutes?";
 
-    private static final int BOOK_LOADER_ID = 1;
+
 
     ArrayList<BusInfo> buses;
 
@@ -300,7 +296,7 @@ public class MainActivity extends FragmentActivity
 //            url = USGS_REQUEST_URL + routes;
             url = "https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyAEBBlM76YfcI7of-9Q5UkTM2O_NBjGaNw&origin="
             + start_place + "+Pittsburgh&destination=" + end_place + "+Pittsburgh&mode=transit&transit_mode=bus";
-            Toast.makeText(MainActivity.this, "URL : " + url, Toast.LENGTH_LONG).show();
+//            Toast.makeText(MainActivity.this, "URL : " + url, Toast.LENGTH_LONG).show();
             System.out.println("url : " + url);
             DyfiAsyncTask dyfi = new DyfiAsyncTask();
             dyfi.execute(url);
@@ -319,10 +315,23 @@ public class MainActivity extends FragmentActivity
     /**
      * Update the UI with the given earthquake information.
      */
-    private void updateUi(List<BusInfo> lists) {
+    private void updateUi(final List<BusInfo> lists) {
         adapter = new BusInfoAdapter(this, lists);
-         listView.setAdapter(adapter);
-
+        listView.setAdapter(adapter);
+        // Check one route, and check the detail route information in another screen.
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, RouteDetail.class);
+                if (lists == null) {
+                    Log.i(LOG_TAG, "buses is null");
+                }
+                Log.i(LOG_TAG, "buses size: " + lists.size());
+                BusInfo clickedRoute = lists.get(position);
+                intent.putExtra("routeDetail", clickedRoute.getDetailJson());
+                startActivity(intent);
+            }
+        });
     }
 
     public static boolean isConnectedNetwork(Context context) {

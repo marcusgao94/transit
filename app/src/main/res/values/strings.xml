@@ -8,5 +8,5 @@
     <string name="no_result">No results found</string>
     <string name="depart_time">Depart Time</string>
     <string name="depart_date">Depart Date</string>
-    <string name="title_activity_maps">myMap</string>
+    <string name="route_detail">Route Detail</string>
 </resources>

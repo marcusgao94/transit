@@ -67,7 +67,7 @@ public final class QueryUtils {
                         JSONObject lineObject = (JSONObject) transitObject.get("line");
                         String routeName = (String) lineObject.get("short_name");
                         System.out.println("bus name : " + routeName);
-                        BusInfo busInfo = new BusInfo(departure_Time, arrival_Time, routeName);
+                        BusInfo busInfo = new BusInfo(departure_Time, arrival_Time, routeName, tempObject.toString());
                         busList.add(busInfo);
                     }
 
