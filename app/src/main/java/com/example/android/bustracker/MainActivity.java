@@ -6,7 +6,9 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -16,7 +18,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.text.Layout;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
@@ -30,6 +31,10 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.android.bustracker.directions.Direction;
+import com.example.android.bustracker.directions.Leg;
+import com.example.android.bustracker.directions.Route;
+import com.example.android.bustracker.directions.Step;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -40,9 +45,13 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Dot;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PatternItem;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.PolyUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -68,11 +77,12 @@ public class MainActivity extends FragmentActivity
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
-    private final LatLng mDefaultLocation = new LatLng(0, 0);
+    private final LatLng mDefaultLocation = new LatLng(40.453901, -79.943153);
     private static final int DEFAULT_ZOOM = 15;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private boolean mLocationPermissionGranted;
-    private Location mLastKnownLocation;
+    private Location mLastLocation;
     private Marker marker;
 
 
@@ -117,18 +127,89 @@ public class MainActivity extends FragmentActivity
                 .addApi(Places.PLACE_DETECTION_API)
                 .build();
         mGoogleApiClient.connect();
+    }
 
-        // ask for location permission and get current location
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mLocationPermissionGranted = true;
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+            default:
+                return ;
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        // Build the map.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        // request location
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (mLastLocation == null) {
+                LocationRequest mLocationRequest = LocationRequest.create()
+                        .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                        .setInterval(5000)
+                        .setFastestInterval(1000)
+                        .setMaxWaitTime(5000);
+                LocationServices.FusedLocationApi.requestLocationUpdates(
+                        mGoogleApiClient, mLocationRequest, this);
+            }
+            else {
+                updateMap();
+            }
         }
         else {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        if (result.hasResolution()) {
+            try {
+                // Start an Activity that tries to resolve the error
+                result.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+            } catch (IntentSender.SendIntentException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.i(LOG_TAG, "Location services connection failed with code " +
+                    result.getErrorCode());
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        Log.d(LOG_TAG, "Play services connection suspended");
+    }
+
+    @Override
+    public void onLocationChanged(final Location location) {
+        //your code here
+        Log.w(LOG_TAG, "location changed");
+        mLastLocation = location;
+        updateMap();
     }
 
     @Override
@@ -158,93 +239,64 @@ public class MainActivity extends FragmentActivity
         updateMap();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mLocationPermissionGranted = true;
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-            default:
-                return ;
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
-    }
-
-    @Override
-    public void onLocationChanged(final Location location) {
-        //your code here
-        System.out.println("location changed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        mLastKnownLocation = location;
-        updateMap();
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult result) {
-        Log.d(LOG_TAG, "Play services connection failed");
-    }
-
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        // Build the map.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
-        // request location
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            mLocationPermissionGranted = true;
-            mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            LocationRequest mLocationRequest = new LocationRequest();
-            mLocationRequest.setFastestInterval(1000);
-            mLocationRequest.setInterval(5000);
-            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            mLocationRequest.setMaxWaitTime(5000);
-            LocationServices.FusedLocationApi.requestLocationUpdates(
-                    mGoogleApiClient, mLocationRequest, this);
-        }
-        else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int cause) {
-        Log.d(LOG_TAG, "Play services connection suspended");
-    }
-
     public void updateMap() {
-        if (mLastKnownLocation != null) {
+        if (mLastLocation != null) {
             if (marker != null)
                 marker.remove();
             marker = mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(
-                            mLastKnownLocation.getLatitude(),
-                            mLastKnownLocation.getLongitude()))
+                            mLastLocation.getLatitude(),
+                            mLastLocation.getLongitude()))
                     .title("Team Six's here ^_^"));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(mLastKnownLocation.getLatitude(),
-                            mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                    new LatLng(mLastLocation.getLatitude(),
+                            mLastLocation.getLongitude()), DEFAULT_ZOOM));
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
         } else {
-            Log.d(LOG_TAG, "Current location is null. Using defaults.");
+            Log.w(LOG_TAG, "Current location is null. Using defaults");
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
     }
+
+    public void plotDirections(Direction direction) {
+        PolylineOptions busOptions = new PolylineOptions();
+        List<PatternItem> patternItems = new ArrayList<>();
+        PatternItem dot = new Dot();
+        patternItems.add(dot);
+        if (direction.getStatus().equals("OK")) {
+            Route route = direction.getRoutes().get(0);
+            for (Leg leg : route.getLegs()) {
+                for (Step step : leg.getSteps()) {
+                    if (step.getTravel_mode().equals("WALKING")) {
+                        List<LatLng> latLngs = PolyUtil.decode(step.getPolyline().getPoints());
+                        mMap.addPolyline(new PolylineOptions()
+                                .addAll(latLngs)
+                                .color(Color.BLUE)
+                                .width(10)
+                                .pattern(patternItems));
+                    }
+                    else if (step.getTravel_mode().equals("TRANSIT")) {
+                        List<LatLng> latLngs = PolyUtil.decode(step.getPolyline().getPoints());
+                        mMap.addPolyline(new PolylineOptions()
+                                .addAll(latLngs)
+                                .color(Color.BLUE)
+                                .width(10));
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+    // Text input and search bar
 
     public void showTimePickerDialog(View v) {
         DialogFragment newFragment = new TimePickerFragment();
@@ -256,31 +308,35 @@ public class MainActivity extends FragmentActivity
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
-    private class DyfiAsyncTask extends AsyncTask<String,Void,List<BusInfo>> {
+    private class DyfiAsyncTask extends AsyncTask<String,Void,Direction> {
         @Override
-        protected List<BusInfo> doInBackground(String... urls) {
+        protected Direction doInBackground(String... urls) {
             if (urls.length < 1 || urls[0] == null) {
                 return null;
             }
 
-            Directions directions = new Directions();
-            directions.getDirections();
+            MyAPIClient myClient = new MyAPIClient();
+            Direction direction = myClient.getDirections();
 
-
+            /*
             List<BusInfo> buses = QueryUtils.extractFeatureFromJson(urls[0]);
             if (buses == null) {
                 Log.w(LOG_TAG, "no bus info return");
             }
-            return buses;
+            */
+            return direction;
         }
 
         @Override
-        protected void onPostExecute(List<BusInfo> busInfos) {
+        protected void onPostExecute(Direction direction) {
+            /*
             if (busInfos == null) {
                 Log.w(LOG_TAG, "no bus info return in post Execute");
                 return;
             }
             updateUi(busInfos);
+            */
+            plotDirections(direction);
         }
     }
 
