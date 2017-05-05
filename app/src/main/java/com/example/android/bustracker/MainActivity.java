@@ -15,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.text.Layout;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
@@ -71,7 +72,7 @@ public class MainActivity extends FragmentActivity
 
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
-    private final LatLng mDefaultLocation = new LatLng(40.444585, -79.943349);
+    private final LatLng mDefaultLocation = new LatLng(0, 0);
     private static final int DEFAULT_ZOOM = 15;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
@@ -265,6 +266,11 @@ public class MainActivity extends FragmentActivity
             if (urls.length < 1 || urls[0] == null) {
                 return null;
             }
+
+            Directions directions = new Directions();
+            directions.getDirections();
+
+
             List<BusInfo> buses = QueryUtils.extractFeatureFromJson(urls[0]);
             if (buses == null) {
                 Log.w(LOG_TAG, "no bus info return");
