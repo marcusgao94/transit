@@ -19,17 +19,15 @@ public class MyAPIClient {
 
     String key = "AIzaSyAEBBlM76YfcI7of-9Q5UkTM2O_NBjGaNw";
     public static final String LOG_TAG = MyAPIClient.class.getSimpleName();
-
+    String url;
+    public MyAPIClient (String url) {
+        this.url = url;
+    }
     public Direction getDirections() {
-        String base = "https://maps.googleapis.com/maps/api/directions/json";
-        String origin = "lotus food company pittsburgh";
-        String destination = "carnegie mellon university pittsburgh";
-        URI uri = UriComponentsBuilder.fromHttpUrl(base)
-                .queryParam("key", key)
-                .queryParam("origin", origin)
-                .queryParam("destination", destination)
+        URI uri = UriComponentsBuilder.fromHttpUrl(url)
                 .queryParam("mode", "transit")
                 .queryParam("transit_mode", "bus")
+                .queryParam("alternatives", "true")
                 .build().encode().toUri();
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Direction> response = restTemplate.getForEntity(
