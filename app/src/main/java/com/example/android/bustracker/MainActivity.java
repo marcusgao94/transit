@@ -91,6 +91,7 @@ public class MainActivity extends FragmentActivity
         /**After press the search button, the list of buses will be displayed on the screen. */
         final Button searchButton = (Button)findViewById(R.id.search_button);
         listView = (ListView) findViewById(R.id.list_view);
+        listView.setVisibility(View.INVISIBLE);
         final Button departTiButton = (Button) findViewById(R.id.depart_time);
 //        departTiButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -303,9 +304,8 @@ public class MainActivity extends FragmentActivity
             if (urls.length < 1 || urls[0] == null) {
                 return null;
             }
-            Direction direction = QueryUtils.extractFeatureFromJson(urls[0]);
-//            MyAPIClient myClient = new MyAPIClient();
-//            Direction direction = myClient.getDirections();
+            MyAPIClient myClient = new MyAPIClient(urls[0]);
+            Direction direction = myClient.getDirections();
 
             return direction;
         }
