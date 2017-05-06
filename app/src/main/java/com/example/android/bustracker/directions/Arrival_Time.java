@@ -1,16 +1,17 @@
 package com.example.android.bustracker.directions;
 
-/**
- * Created by marcusgao on 2017/5/5.
- */
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+/**
+ * Created by yishuyan on 5/6/17.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Fare implements Parcelable {
+@JsonInclude(Include.NON_NULL)
+public class Arrival_Time implements Parcelable {
     private String text;
 
     public String getText() {
@@ -31,22 +32,22 @@ public class Fare implements Parcelable {
         dest.writeString(this.text);
     }
 
-    public Fare() {
+    public Arrival_Time() {
     }
 
-    protected Fare(Parcel in) {
+    protected Arrival_Time(Parcel in) {
         this.text = in.readString();
     }
 
-    public static final Parcelable.Creator<Fare> CREATOR = new Parcelable.Creator<Fare>() {
+    public static final Parcelable.Creator<Arrival_Time> CREATOR = new Parcelable.Creator<Arrival_Time>() {
         @Override
-        public Fare createFromParcel(Parcel source) {
-            return new Fare(source);
+        public Arrival_Time createFromParcel(Parcel source) {
+            return new Arrival_Time(source);
         }
 
         @Override
-        public Fare[] newArray(int size) {
-            return new Fare[size];
+        public Arrival_Time[] newArray(int size) {
+            return new Arrival_Time[size];
         }
     };
 }

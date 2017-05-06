@@ -3,6 +3,7 @@ package com.example.android.bustracker;
 import android.util.Log;
 
 import com.example.android.bustracker.directions.Direction;
+import com.example.android.bustracker.directions.Route;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -17,6 +18,7 @@ import java.net.URI;
 public class MyAPIClient {
 
     String key = "AIzaSyAEBBlM76YfcI7of-9Q5UkTM2O_NBjGaNw";
+    public static final String LOG_TAG = MyAPIClient.class.getSimpleName();
 
     public Direction getDirections() {
         String base = "https://maps.googleapis.com/maps/api/directions/json";
@@ -33,6 +35,8 @@ public class MyAPIClient {
         ResponseEntity<Direction> response = restTemplate.getForEntity(
                 uri, Direction.class);
         Direction dr = response.getBody();
+        Route route = dr.getRoutes().get(0);
+        Log.w(LOG_TAG, "Price : " + route.getFare().getText());
         Log.w(MainActivity.LOG_TAG, "status " + dr.getStatus());
         return dr;
     }
