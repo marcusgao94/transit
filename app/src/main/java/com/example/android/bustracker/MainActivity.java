@@ -64,9 +64,6 @@ public class MainActivity extends FragmentActivity
     private static String USGS_REQUEST_URL = "https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyAEBBlM76YfcI7of-9Q5UkTM2O_NBjGaNw";
 
 
-
-    ArrayList<BusInfo> buses;
-
     BusInfoAdapter adapter;
     private EditText start_name, end_name, stop_id;
     private String typeName, url;
@@ -314,28 +311,17 @@ public class MainActivity extends FragmentActivity
             if (urls.length < 1 || urls[0] == null) {
                 return null;
             }
+            Direction direction = QueryUtils.extractFeatureFromJson(urls[0]);
+//            MyAPIClient myClient = new MyAPIClient();
+//            Direction direction = myClient.getDirections();
 
-            MyAPIClient myClient = new MyAPIClient();
-            Direction direction = myClient.getDirections();
-
-            /*
-            List<BusInfo> buses = QueryUtils.extractFeatureFromJson(urls[0]);
-            if (buses == null) {
-                Log.w(LOG_TAG, "no bus info return");
-            }
-            */
             return direction;
         }
 
         @Override
         protected void onPostExecute(Direction direction) {
-            /*
-            if (busInfos == null) {
-                Log.w(LOG_TAG, "no bus info return in post Execute");
-                return;
-            }
-            updateUi(busInfos);
-            */
+            List<Route> routes = direction.getRoutes();
+            updateUi(routes);
             plotDirections(direction);
         }
     }
@@ -347,13 +333,10 @@ public class MainActivity extends FragmentActivity
             String start_place = start_name.getText().toString().replace(" ", "+");
             end_name = (EditText)findViewById(R.id.type_end);
             String end_place = end_name.getText().toString().replace(" ", "+");
-            //stop_id = (EditText)findViewById(R.id.stop_id);
-            //typeName = stop_id.getText().toString().replace(" ","+");
-//            url = USGS_REQUEST_URL + routes;
-            url = "https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyAEBBlM76YfcI7of-9Q5UkTM2O_NBjGaNw&origin="
-            + start_place + "+Pittsburgh&destination=" + end_place + "+Pittsburgh&mode=transit&transit_mode=bus&alternatives=true";
-//            Toast.makeText(MainActivity.this, "URL : " + url, Toast.LENGTH_LONG).show();
-            System.out.println("url : " + url);
+
+            url = USGS_REQUEST_URL + "&origin="
+            + start_place + "+Pittsburgh&destination=" + end_place + "+Pittsburgh";
+
             DyfiAsyncTask dyfi = new DyfiAsyncTask();
             dyfi.execute(url);
 //            if (typeName.isEmpty()) {
@@ -371,7 +354,7 @@ public class MainActivity extends FragmentActivity
     /**
      * Update the UI with the given earthquake information.
      */
-    private void updateUi(final List<BusInfo> lists) {
+    private void updateUi(final List<Route> lists) {
         adapter = new BusInfoAdapter(this, lists);
         listView.setAdapter(adapter);
         // Check one route, and check the detail route information in another screen.
@@ -383,8 +366,9 @@ public class MainActivity extends FragmentActivity
                     Log.i(LOG_TAG, "buses is null");
                 }
                 Log.i(LOG_TAG, "buses size: " + lists.size());
-                BusInfo clickedRoute = lists.get(position);
-                intent.putExtra("routeDetail", clickedRoute.getDetailJson());
+                Route clickedRoute = lists.get(position);
+                Leg currentLeg = clickedRoute.getLegs().get(0);
+                intent.putExtra("legDetail", currentLeg);
                 startActivity(intent);
             }
         });
@@ -404,7 +388,6 @@ public class MainActivity extends FragmentActivity
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current time as the default values for the picker
             final Calendar c = Calendar.getInstance();
-//            int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
             int hour = c.get(Calendar.HOUR_OF_DAY);
             int minute = c.get(Calendar.MINUTE);

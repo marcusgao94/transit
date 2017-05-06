@@ -9,4 +9,8 @@
     <string name="depart_time">Depart Time</string>
     <string name="depart_date">Depart Date</string>
     <string name="route_detail">Route Detail</string>
+    <string name="total_distance">Estimated Distance : </string>
+    <string name="total_time">Estimated Time : </string>
+    <string name="estimated_depart">Departure Time : </string>
+    <string name="estimated_arrive">   Arrival Time : </string>
 </resources>
