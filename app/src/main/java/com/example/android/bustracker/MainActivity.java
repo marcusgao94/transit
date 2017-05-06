@@ -285,14 +285,6 @@ public class MainActivity extends FragmentActivity
         }
     }
 
-
-
-
-
-
-
-
-
     // Text input and search bar
 
     public void showTimePickerDialog(View v) {
