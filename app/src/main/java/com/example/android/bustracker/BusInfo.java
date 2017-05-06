@@ -26,7 +26,6 @@ public class BusInfo {
         this.endTime = endTime;
     }
 
-
     public String getRouteNum() {
         return routeNum;
     }
