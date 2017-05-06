@@ -91,7 +91,6 @@ public class MainActivity extends FragmentActivity
         /**After press the search button, the list of buses will be displayed on the screen. */
         final Button searchButton = (Button)findViewById(R.id.search_button);
         listView = (ListView) findViewById(R.id.list_view);
-        listView.setVisibility(View.INVISIBLE);
         final Button departTiButton = (Button) findViewById(R.id.depart_time);
 //        departTiButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -257,34 +256,7 @@ public class MainActivity extends FragmentActivity
         }
     }
 
-    public void plotDirections(Direction direction) {
-        PolylineOptions busOptions = new PolylineOptions();
-        List<PatternItem> patternItems = new ArrayList<>();
-        PatternItem dot = new Dot();
-        patternItems.add(dot);
-        if (direction.getStatus().equals("OK")) {
-            Route route = direction.getRoutes().get(0);
-            for (Leg leg : route.getLegs()) {
-                for (Step step : leg.getSteps()) {
-                    if (step.getTravel_mode().equals("WALKING")) {
-                        List<LatLng> latLngs = PolyUtil.decode(step.getPolyline().getPoints());
-                        mMap.addPolyline(new PolylineOptions()
-                                .addAll(latLngs)
-                                .color(Color.BLUE)
-                                .width(10)
-                                .pattern(patternItems));
-                    }
-                    else if (step.getTravel_mode().equals("TRANSIT")) {
-                        List<LatLng> latLngs = PolyUtil.decode(step.getPolyline().getPoints());
-                        mMap.addPolyline(new PolylineOptions()
-                                .addAll(latLngs)
-                                .color(Color.BLUE)
-                                .width(10));
-                    }
-                }
-            }
-        }
-    }
+
 
     // Text input and search bar
 
@@ -314,7 +286,6 @@ public class MainActivity extends FragmentActivity
         protected void onPostExecute(Direction direction) {
             List<Route> routes = direction.getRoutes();
             updateUi(routes);
-            plotDirections(direction);
         }
     }
 
