@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">BusTracker</string>
 
+    <string name="action_settings">Settings</string>
+
     <string name="search_result">Search Results</string>
     <string name="latest_bus">Upcoming Bus</string>
 
@@ -41,4 +43,31 @@
         <item>Depart At</item>
         <item>Arrive By</item>
     </string-array>
+
+    <string name="username">Name</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="login">Login</string>
+    <string name="product_picture">Uploading Picture</string>
+    <string name="no_info">Please fill in product number or price</string>
+    <string name="register_button">Register</string>
+
+
+    <string name="first_prefer">Transit Modes</string>
+    <string name="second_prefer">Map Layers</string>
+    <string name="third_prefer">Trip Planner</string>
+
+    <string name="first_radio1">Light Rail</string>
+    <string name="first_radio2">Bus</string>
+    <string name="first_radio3">Funicular</string>
+    <string name="first_radio4">Uber</string>
+
+    <string name="second_radio1">My Locations</string>
+    <string name="second_radio2">Bike Paths</string>
+    <string name="second_radio3">Funicular</string>
+
+    <string name="third_radio1">Minimize Walking</string>
+    <string name="third_radio2">Less Transfer</string>
+
+
 </resources>

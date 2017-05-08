@@ -10,11 +10,11 @@ import android.view.ViewGroup;
  * Created by yishuyan on 5/8/17.
  */
 
-public class LoginActivity extends Fragment {
+public class PreferenceActivity extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.login, container, false);
+// Inflate the layout for this fragment
+        return inflater.inflate(R.layout.preference, container, false);
     }
 }

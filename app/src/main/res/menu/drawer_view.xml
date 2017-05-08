@@ -13,7 +13,7 @@
             android:title="@string/nv_third" />
         <item
             android:id="@+id/nav_forth_fragment"
-            android:title="@string/nv_forth" />
+            android:title="@string/nv_forth"/>
         <item
             android:id="@+id/nav_fifth_fragment"
             android:title="@string/nv_fifth" />
