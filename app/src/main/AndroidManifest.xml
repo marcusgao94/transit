@@ -21,17 +21,26 @@ package="com.example.android.bustracker">
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RouteDetail"
-            android:label="@string/route_detail"
+        <activity android:name=".SearchResultActivity"
+            android:label="@string/search_result"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
-            <intent-filter>
-                <action android:name="android.intent.action.SENDTO" />
-                <data android:scheme="mailto" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+        </activity>
+        <activity android:name=".LatestRouteActivity"
+            android:label="@string/search_result"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity android:name=".RouteDetail"
+            android:label="@string/route_detail"
+            android:parentActivityName=".SearchResultActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".SearchResultActivity" />
         </activity>
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAEBBlM76YfcI7of-9Q5UkTM2O_NBjGaNw" />

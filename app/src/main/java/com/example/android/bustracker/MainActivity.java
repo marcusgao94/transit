@@ -8,20 +8,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -32,9 +37,6 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.android.bustracker.directions.Direction;
-import com.example.android.bustracker.directions.Leg;
-import com.example.android.bustracker.directions.Route;
-import com.example.android.bustracker.directions.Step;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -45,19 +47,13 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.Dot;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PatternItem;
-import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.maps.android.PolyUtil;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
-public class MainActivity extends FragmentActivity
+public class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks, LocationListener {
 
@@ -69,6 +65,13 @@ public class MainActivity extends FragmentActivity
     private String typeName, url;
     private TextView emptyTextView;
     ListView listView;
+
+    // For the navigation bar
+    private DrawerLayout mDrawer;
+    private Toolbar toolbar;
+    private NavigationView nvDrawer;
+    private ActionBarDrawerToggle drawerToggle;
+
 
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -88,6 +91,19 @@ public class MainActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.i(LOG_TAG, "OnCreate is called");
+
+        /**-----------------------------Set a Toolbar to replace the ActionBar.---------------------------*/
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // Find our drawer view
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        // Find our drawer view
+        nvDrawer = (NavigationView) findViewById(R.id.nvView);
+        // Setup drawer view
+        setupDrawerContent(nvDrawer);
+
         /**After press the search button, the list of buses will be displayed on the screen. */
         final Button searchButton = (Button)findViewById(R.id.search_button);
         listView = (ListView) findViewById(R.id.list_view);
@@ -111,8 +127,20 @@ public class MainActivity extends FragmentActivity
                 searchClicked();
             }
         });
-        //emptyTextView = (TextView)findViewById(R.id.empty_view);
-        // listView.setEmptyView(emptyTextView);
+
+        /**-----------------------------Add floating button in main Page, to check the upcoming bus.---------------------------*/
+        FloatingActionButton addButton = (FloatingActionButton) findViewById(R.id.add);
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, LatestRouteActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+        /**-----------------------------Add Google Map in main page.---------------------------*/
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -126,6 +154,67 @@ public class MainActivity extends FragmentActivity
         mGoogleApiClient.connect();
     }
 
+    /**-----------------------------The code below is about the navigation bar.---------------------------*/
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // The action bar home/up action should open or close the drawer.
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawer.openDrawer(GravityCompat.START);
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+//                        selectDrawerItem(menuItem);
+                        return true;
+                    }
+                });
+    }
+
+//    public void selectDrawerItem(MenuItem menuItem) {
+//        // Create a new fragment and specify the fragment to show based on nav item clicked
+//        Fragment fragment = null;
+//        Class fragmentClass;
+//        switch(menuItem.getItemId()) {
+//            case R.id.nav_first_fragment:
+//                fragmentClass = FirstFragment.class;
+//                break;
+//            case R.id.nav_second_fragment:
+//                fragmentClass = SecondFragment.class;
+//                break;
+//            case R.id.nav_third_fragment:
+//                fragmentClass = ThirdFragment.class;
+//                break;
+//            default:
+//                fragmentClass = FirstFragment.class;
+//        }
+//
+//        try {
+//            fragment = (Fragment) fragmentClass.newInstance();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        // Insert the fragment by replacing any existing fragment
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+//
+//        // Highlight the selected item has been done by NavigationView
+//        menuItem.setChecked(true);
+//        // Set action bar title
+//        setTitle(menuItem.getTitle());
+//        // Close the navigation drawer
+//        mDrawer.closeDrawers();
+//    }
+
+    /**-----------------------------The code below is about the google map action.---------------------------*/
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -260,16 +349,6 @@ public class MainActivity extends FragmentActivity
 
     // Text input and search bar
 
-    public void showTimePickerDialog(View v) {
-        DialogFragment newFragment = new TimePickerFragment();
-        newFragment.show(getSupportFragmentManager(), "timePicker");
-    }
-
-    public void showDatePickerDialog(View v) {
-        DialogFragment newFragment = new DatePickerFragment();
-        newFragment.show(getSupportFragmentManager(), "datePicker");
-    }
-
     private class DyfiAsyncTask extends AsyncTask<String,Void,Direction> {
         @Override
         protected Direction doInBackground(String... urls) {
@@ -284,11 +363,11 @@ public class MainActivity extends FragmentActivity
 
         @Override
         protected void onPostExecute(Direction direction) {
-            List<Route> routes = direction.getRoutes();
-            updateUi(routes);
+            updateUi(direction);
         }
     }
 
+    /**-----------------------------The code below is about search action.---------------------------*/
     private void searchClicked() {
         if (isConnectedNetwork(this)) {
             Log.i(LOG_TAG, "Connected");
@@ -317,24 +396,10 @@ public class MainActivity extends FragmentActivity
     /**
      * Update the UI with the given earthquake information.
      */
-    private void updateUi(final List<Route> lists) {
-        adapter = new BusInfoAdapter(this, lists);
-        listView.setAdapter(adapter);
-        // Check one route, and check the detail route information in another screen.
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent intent = new Intent(MainActivity.this, RouteDetail.class);
-                if (lists == null) {
-                    Log.i(LOG_TAG, "buses is null");
-                }
-                Log.i(LOG_TAG, "buses size: " + lists.size());
-                Route clickedRoute = lists.get(position);
-                Leg currentLeg = clickedRoute.getLegs().get(0);
-                intent.putExtra("legDetail", currentLeg);
-                startActivity(intent);
-            }
-        });
+    private void updateUi(Direction direction) {
+        Intent result_intent = new Intent(MainActivity.this, SearchResultActivity.class);
+        result_intent.putExtra("search_result", direction);
+        startActivity(result_intent);
     }
 
     public static boolean isConnectedNetwork(Context context) {
@@ -342,6 +407,18 @@ public class MainActivity extends FragmentActivity
                 (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
+
+    /**-----------------------------The code below is about select time and date.---------------------------*/
+
+    public void showTimePickerDialog(View v) {
+        DialogFragment newFragment = new TimePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "timePicker");
+    }
+
+    public void showDatePickerDialog(View v) {
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
     public static class TimePickerFragment extends DialogFragment

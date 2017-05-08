@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_first_fragment"
+            android:title="@string/nv_first"
+            android:checked="true"/>
+        <item
+            android:id="@+id/nav_second_fragment"
+            android:title="@string/nv_second" />
+        <item
+            android:id="@+id/nav_third_fragment"
+            android:title="@string/nv_third" />
+        <item
+            android:id="@+id/nav_forth_fragment"
+            android:title="@string/nv_forth" />
+        <item
+            android:id="@+id/nav_fifth_fragment"
+            android:title="@string/nv_fifth" />
+    </group>
+    <item android:title="Sub items">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:title="@string/nv_sixth" />
+                <item
+                    android:title="@string/nv_seventh" />
+            </group>
+        </menu>
+    </item>
+
+</menu>

@@ -6,6 +6,7 @@
     android:orientation="vertical">
 
 
+
     <TextView
         android:id="@+id/departTime"
         android:layout_width="wrap_content"
@@ -16,12 +17,14 @@
 
     <TextView
         android:id="@+id/arrivalTime"
-        style="@style/bookInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:textColor="@color/ArrivalTime"/>
 
     <TextView
         android:id="@+id/bus_Num"
-        style="@style/bookInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:textColor="@color/bus_Num"/>
