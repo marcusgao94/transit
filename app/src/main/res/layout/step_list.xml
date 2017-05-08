@@ -8,40 +8,114 @@
         android:layout_height="wrap_content"/>
 
 
-    <TextView
-        android:id="@+id/transit_distance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <!--<TextView-->
+        <!--android:id="@+id/transit_distance"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"/>-->
 
-    <TextView
-        android:id="@+id/transit_duration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:id="@+id/line_num"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <!--<TextView-->
+        <!--android:id="@+id/transit_duration"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"/>-->
 
 
-    <TextView
-        android:id="@+id/depart_at"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
 
-    <TextView
-        android:id="@+id/depart_stop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <!--<TextView-->
+        <!--android:id="@+id/arrive_at"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"/>-->
 
-    <TextView
-        android:id="@+id/arrive_at"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <!--<TextView-->
+        <!--android:id="@+id/arrive_stop"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"/>-->
 
-    <TextView
-        android:id="@+id/arrive_stop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/bus_icon"
+                android:src="@drawable/bus"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"/>
+
+            <!--<ImageView-->
+            <!--android:id="@+id/stop_icon"-->
+            <!--android:src="@drawable/bus_stop"-->
+            <!--android:layout_width="18dp"-->
+            <!--android:layout_height="18dp"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginLeft="5dp"/>-->
+
+            <TextView
+                android:id="@+id/depart_at"
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/transit_line"
+            android:layout_width="wrap_content"
+            android:layout_height="65dp"
+            android:weightSum="1"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="60dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+            <ImageView
+                android:id="@+id/top_line"
+                android:src="@drawable/transit_line"
+                android:layout_width="3dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".5"/>
+            <ImageView
+                android:id="@+id/transit_stop"
+                android:src="@drawable/transit_stop"
+                android:layout_width="13dp"
+                android:layout_height="13dp"/>
+            <ImageView
+                android:id="@+id/bottom_line"
+                android:src="@drawable/transit_line"
+                android:layout_width="3dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".5"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:padding="10sp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="60dp"
+            android:orientation="vertical" android:layout_centerVertical="true">
+            <TextView
+                android:id="@+id/depart_stop"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:ellipsize="end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/line_num"
+                android:textColor="@android:color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </RelativeLayout>
+
 
 </LinearLayout>

@@ -21,6 +21,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        <Spinner
+            android:id="@+id/spinner1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/time_options"
+            android:prompt="@string/time_select" />
+
         <Button
             android:id="@+id/depart_time"
             android:layout_width="wrap_content"

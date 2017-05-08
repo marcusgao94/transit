@@ -17,7 +17,6 @@ import java.net.URI;
 
 public class MyAPIClient {
 
-    String key = "AIzaSyAEBBlM76YfcI7of-9Q5UkTM2O_NBjGaNw";
     public static final String LOG_TAG = MyAPIClient.class.getSimpleName();
     String url;
     public MyAPIClient (String url) {
@@ -29,6 +28,7 @@ public class MyAPIClient {
                 .queryParam("transit_mode", "bus")
                 .queryParam("alternatives", "true")
                 .build().encode().toUri();
+        Log.w(LOG_TAG, uri+"");
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Direction> response = restTemplate.getForEntity(
                 uri, Direction.class);

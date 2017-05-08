@@ -12,16 +12,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.android.bustracker.directions.Direction;
 import com.example.android.bustracker.directions.Leg;
-import com.example.android.bustracker.directions.Route;
 import com.example.android.bustracker.directions.Step;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -73,16 +70,16 @@ public class RouteDetail extends FragmentActivity
         Intent intent = getIntent();
         leg = (Leg) intent.getParcelableExtra("legDetail");
 
-        TextView departView = (TextView) findViewById(R.id.estimated_depart);
-        departView.setText(leg.getDeparture_time().getText());
-
-        TextView arrivalView = (TextView) findViewById(R.id.estimated_arrive);
-        arrivalView.setText(leg.getArrival_time().getText());
-        TextView distanceView = (TextView) findViewById(R.id.total_distance);
-        distanceView.setText(leg.getDistance().getText());
-
-        TextView durationView = (TextView) findViewById(R.id.total_time);
-        durationView.setText(leg.getDuration().getText());
+//        TextView departView = (TextView) findViewById(R.id.estimated_depart);
+//        departView.setText(leg.getDeparture_time().getText());
+//
+//        TextView arrivalView = (TextView) findViewById(R.id.estimated_arrive);
+//        arrivalView.setText(leg.getArrival_time().getText());
+//        TextView distanceView = (TextView) findViewById(R.id.total_distance);
+//        distanceView.setText(leg.getDistance().getText());
+//
+//        TextView durationView = (TextView) findViewById(R.id.total_time);
+//        durationView.setText(leg.getDuration().getText());
 
         listView = (ListView) findViewById(R.id.step_view);
         List<Step> stepList = leg.getSteps();

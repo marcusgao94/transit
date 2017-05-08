@@ -14,6 +14,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
@@ -27,11 +28,13 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -51,6 +54,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.text.ParseException;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity
@@ -65,6 +69,13 @@ public class MainActivity extends AppCompatActivity
     private String typeName, url;
     private TextView emptyTextView;
     ListView listView;
+    // Record if the leave now, or arrive by, or depart at.
+    private String timeOptions;
+    private static String timeString;
+    private static String dateString;
+
+    static Button departDaButton;
+    static Button departTiButton;
 
     // For the navigation bar
     private DrawerLayout mDrawer;
@@ -72,6 +83,7 @@ public class MainActivity extends AppCompatActivity
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
 
+    private Spinner timeSpinner;
 
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -107,20 +119,24 @@ public class MainActivity extends AppCompatActivity
         /**After press the search button, the list of buses will be displayed on the screen. */
         final Button searchButton = (Button)findViewById(R.id.search_button);
         listView = (ListView) findViewById(R.id.list_view);
-        final Button departTiButton = (Button) findViewById(R.id.depart_time);
-//        departTiButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showTimePickerDialog(view);
-//            }
-//        });
-//        final Button departDaButton = (Button) findViewById(R.id.depart_date);
-//        departDaButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showDatePickerDialog(view);
-//            }
-//        });
+
+        timeSpinner = (Spinner) findViewById(R.id.spinner1);
+
+        timeSpinner.setOnItemSelectedListener(new CustomOnItemSelectedListener());
+        departTiButton = (Button) findViewById(R.id.depart_time);
+        departTiButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTimePickerDialog(view);
+            }
+        });
+        departDaButton = (Button) findViewById(R.id.depart_date);
+        departDaButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePickerDialog(view);
+            }
+        });
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -375,9 +391,27 @@ public class MainActivity extends AppCompatActivity
             String start_place = start_name.getText().toString().replace(" ", "+");
             end_name = (EditText)findViewById(R.id.type_end);
             String end_place = end_name.getText().toString().replace(" ", "+");
-
+            long time = convertTime(dateString, timeString);
             url = USGS_REQUEST_URL + "&origin="
-            + start_place + "+Pittsburgh&destination=" + end_place + "+Pittsburgh";
+                    + start_place + "+Pittsburgh&destination=" + end_place + "+Pittsburgh";
+
+            if (time != 0) {
+                // time selected
+                String timePara = "";
+                switch (timeOptions) {
+                    case "Depart At":
+                        timePara = "departure_time=";
+                        break;
+                    case "Arrive By":
+                        timePara = "arrival_time=";
+                        break;
+                    default:
+                        break;
+                }
+                url += "&" + timePara + time;
+            }
+
+            Log.i(LOG_TAG, url);
 
             DyfiAsyncTask dyfi = new DyfiAsyncTask();
             dyfi.execute(url);
@@ -439,6 +473,11 @@ public class MainActivity extends AppCompatActivity
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             // Do something with the time chosen by the user
+            String hour_x = hourOfDay + "";
+            if (hourOfDay   < 9 ){ hour_x  = "0" + hourOfDay;}
+//            Log.i("Selected Time - ",  hour_x + ":" + minute);
+            timeString = hour_x + ":" + minute;
+            departTiButton.setText(timeString);
         }
     }
 
@@ -459,6 +498,39 @@ public class MainActivity extends AppCompatActivity
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // Do something with the date chosen by the user
+            String day_x = ""+ day, month_x = "" + (month + 1);
+            if (day   < 9 ){ day_x   = "0" + day_x;}
+            if (month < 9 ){ month_x = "0" + month_x;}
+            dateString = month_x + "/" + day_x;
+            departDaButton.setText(dateString);
+            Log.i("Selected Time - ",  dateString);
         }
+    }
+
+
+    public static long convertTime(String dateString, String timeString) {
+        long epoch = 0;
+        dateString = dateString + "/" + 2017;
+        String time = dateString + " " + timeString+":00";
+        Log.i(LOG_TAG, "convert: " + time);
+        try {
+            epoch = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(time).getTime() / 1000;
+            Log.i(LOG_TAG, "convert Time: " + epoch);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return epoch;
+    }
+    public class CustomOnItemSelectedListener implements OnItemSelectedListener {
+
+        public void onItemSelected(AdapterView<?> parent, View view, int pos,long id) {
+            timeOptions = parent.getItemAtPosition(pos).toString();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> arg0) {
+            // TODO Auto-generated method stub
+        }
+
     }
 }

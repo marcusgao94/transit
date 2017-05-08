@@ -6,13 +6,13 @@
 
     <string name="start">From</string>
     <string name="end">To</string>
-    <string name="search">Search</string>
+    <string name="search">-></string>
 
     <string name="default_msg">Please Input Your Search Items</string>
     <string name="stop_id">Type a stop station id</string>
     <string name="no_result">No results found</string>
-    <string name="depart_time">Depart Time</string>
-    <string name="depart_date">Depart Date</string>
+    <string name="depart_time">Time</string>
+    <string name="depart_date">Date</string>
     <string name="route_detail">Route Detail</string>
     <string name="total_distance">Estimated Distance : </string>
     <string name="total_time">Estimated Time : </string>
@@ -34,4 +34,11 @@
 
     <string name="add_floating">+</string>
 
+    <string name="time_select">Leave Now</string>
+
+    <string-array name="time_options">
+        <item>Leave Now</item>
+        <item>Depart At</item>
+        <item>Arrive By</item>
+    </string-array>
 </resources>

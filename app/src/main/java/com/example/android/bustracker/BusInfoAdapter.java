@@ -41,9 +41,11 @@ public class BusInfoAdapter extends ArrayAdapter<Route> {
         Log.i(LOG_TAG, "Depart Time : " + departureTime);
         List<Step> steps = leg.getSteps();
         String route_name = "";
+        String depart_stop = "";
         for (Step step : steps) {
             if (step.getTravel_mode().equals("TRANSIT")) {
                 route_name = step.getTransit_details().getLine().getShort_name();
+                depart_stop = step.getTransit_details().getDeparture_stop().getName();
                 Log.i(LOG_TAG, "Route Name : " + route_name);
                 break;
             }
@@ -57,8 +59,9 @@ public class BusInfoAdapter extends ArrayAdapter<Route> {
 
         TextView routeNum = (TextView) listView.findViewById(R.id.bus_Num);
         routeNum.setText(route_name);
-//        TextView busName = (TextView) listView.findViewById(R.id.bus_name);
-//        busName.setText(currentBus.getLatitude() + "");
+
+        TextView departStop = (TextView) listView.findViewById(R.id.destination);
+        departStop.setText(depart_stop);
 
 
         return listView;

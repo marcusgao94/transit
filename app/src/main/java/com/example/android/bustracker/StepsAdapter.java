@@ -34,11 +34,11 @@ public class StepsAdapter extends ArrayAdapter<Step> {
         TextView travel_mode = (TextView) listView.findViewById(R.id.travel_mode);
         travel_mode.setText(currentStep.getTravel_mode());
 
-        TextView transit_distance = (TextView) listView.findViewById(R.id.transit_distance);
-        transit_distance.setText(currentStep.getDistance().getText());
+//        TextView transit_distance = (TextView) listView.findViewById(R.id.transit_distance);
+//        transit_distance.setText(currentStep.getDistance().getText());
 
-        TextView transit_duration = (TextView) listView.findViewById(R.id.transit_duration);
-        transit_duration.setText(currentStep.getDuration().getText());
+//        TextView transit_duration = (TextView) listView.findViewById(R.id.transit_duration);
+//        transit_duration.setText(currentStep.getDuration().getText());
 
         if (currentStep.getTravel_mode().equals("TRANSIT")) {
             TextView lineNum = (TextView) listView.findViewById(R.id.line_num);
@@ -50,11 +50,11 @@ public class StepsAdapter extends ArrayAdapter<Step> {
             TextView departTime = (TextView) listView.findViewById(R.id.depart_at);
             departTime.setText(currentStep.getTransit_details().getDeparture_time().getText());
 
-            TextView arrivalStop = (TextView) listView.findViewById(R.id.arrive_stop);
-            arrivalStop.setText(currentStep.getTransit_details().getArrival_stop().getName());
-
-            TextView arriveTime = (TextView) listView.findViewById(R.id.arrive_at);
-            arriveTime.setText(currentStep.getTransit_details().getArrival_time().getText());
+//            TextView arrivalStop = (TextView) listView.findViewById(R.id.arrive_stop);
+//            arrivalStop.setText(currentStep.getTransit_details().getArrival_stop().getName());
+//
+//            TextView arriveTime = (TextView) listView.findViewById(R.id.arrive_at);
+//            arriveTime.setText(currentStep.getTransit_details().getArrival_time().getText());
 
         }
 
