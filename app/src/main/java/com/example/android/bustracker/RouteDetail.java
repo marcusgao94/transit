@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.example.android.bustracker.directions.Leg;
 import com.example.android.bustracker.directions.MyLocation;
+import com.example.android.bustracker.directions.Route;
 import com.example.android.bustracker.directions.Step;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -63,6 +64,7 @@ public class RouteDetail extends FragmentActivity
     private boolean mLocationPermissionGranted;
     private Location mLastLocation;
     private Marker marker;
+    private Route route;
     private Leg leg;
 
     @Override
@@ -70,7 +72,9 @@ public class RouteDetail extends FragmentActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bus_detail);
         Intent intent = getIntent();
-        leg = (Leg) intent.getParcelableExtra("legDetail");
+        route = (Route) intent.getParcelableExtra("currentRoute");
+        leg = route.getLegs().get(0);
+
 
 //        TextView departView = (TextView) findViewById(R.id.estimated_depart);
 //        departView.setText(leg.getDeparture_time().getText());

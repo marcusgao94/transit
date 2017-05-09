@@ -9,7 +9,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.android.bustracker.directions.Direction;
-import com.example.android.bustracker.directions.Leg;
 import com.example.android.bustracker.directions.Route;
 
 import java.util.List;
@@ -50,8 +49,8 @@ public class SearchResultActivity extends AppCompatActivity {
                 }
                 Log.i(LOG_TAG, "buses size: " + lists.size());
                 Route clickedRoute = lists.get(position);
-                Leg currentLeg = clickedRoute.getLegs().get(0);
-                intent.putExtra("legDetail", currentLeg);
+//                Leg currentLeg = clickedRoute.getLegs().get(0);
+                intent.putExtra("currentRoute", clickedRoute);
                 startActivity(intent);
             }
         });
