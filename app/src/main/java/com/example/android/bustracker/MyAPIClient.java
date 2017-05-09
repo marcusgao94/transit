@@ -33,6 +33,8 @@ public class MyAPIClient {
                 .queryParam("transit_mode", "bus")
                 .queryParam("alternatives", "true")
                 .build().encode().toUri();
+        Log.w(LOG_TAG, uri+"");
+        RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Direction> response = restTemplate.getForEntity(
                 uri, Direction.class);
         Direction dr = response.getBody();
