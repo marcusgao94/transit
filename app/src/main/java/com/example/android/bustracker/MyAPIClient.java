@@ -34,7 +34,6 @@ public class MyAPIClient {
                 uri, Direction.class);
         Direction dr = response.getBody();
         Route route = dr.getRoutes().get(0);
-        Log.w(LOG_TAG, "Price : " + route.getFare().getText());
         Log.w(MainActivity.LOG_TAG, "status " + dr.getStatus());
         return dr;
     }

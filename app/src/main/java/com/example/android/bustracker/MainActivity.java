@@ -70,8 +70,7 @@ public class MainActivity extends AppCompatActivity
 
     BusInfoAdapter adapter;
     private EditText start_name, end_name, stop_id;
-    private String typeName, url;
-    private TextView emptyTextView;
+    private String url;
     ListView listView;
     // Record if the leave now, or arrive by, or depart at.
     private String timeOptions;
@@ -395,41 +394,47 @@ public class MainActivity extends AppCompatActivity
     /**-----------------------------The code below is about search action.---------------------------*/
     private void searchClicked() {
         if (isConnectedNetwork(this)) {
-            Log.i(LOG_TAG, "Connected");
-            start_name = (EditText)findViewById(R.id.type_start);
-            String start_place = start_name.getText().toString().replace(" ", "+");
-            end_name = (EditText)findViewById(R.id.type_end);
-            String end_place = end_name.getText().toString().replace(" ", "+");
-            long time = convertTime(dateString, timeString);
-            url = USGS_REQUEST_URL + "&origin="
-                    + start_place + "+Pittsburgh&destination=" + end_place + "+Pittsburgh";
+            try {
+                Log.i(LOG_TAG, "Connected");
+                start_name = (EditText)findViewById(R.id.type_start);
+                String start_place = start_name.getText().toString().replace(" ", "+");
 
-            if (time != 0) {
-                // time selected
-                String timePara = "";
-                switch (timeOptions) {
-                    case "Depart At":
-                        timePara = "departure_time=";
-                        break;
-                    case "Arrive By":
-                        timePara = "arrival_time=";
-                        break;
-                    default:
-                        break;
+                end_name = (EditText)findViewById(R.id.type_end);
+
+                String end_place = end_name.getText().toString().replace(" ", "+");
+                if (end_place.matches("")) {
+                    Toast.makeText(MainActivity.this, "Please enter search item!", Toast.LENGTH_SHORT).show();
+                    return;
                 }
-                url += "&" + timePara + time;
+
+                long time = convertTime(dateString, timeString);
+                url = USGS_REQUEST_URL + "&origin="
+                        + start_place + "+Pittsburgh&destination=" + end_place + "+Pittsburgh";
+
+                if (time != 0) {
+                    // time selected
+                    String timePara = "";
+                    switch (timeOptions) {
+                        case "Depart At":
+                            timePara = "departure_time=";
+                            break;
+                        case "Arrive By":
+                            timePara = "arrival_time=";
+                            break;
+                        default:
+                            break;
+                    }
+                    url += "&" + timePara + time;
+                }
+
+                Log.i(LOG_TAG, url);
+
+                DyfiAsyncTask dyfi = new DyfiAsyncTask();
+                dyfi.execute(url);
+            } catch (Exception e) {
+                Log.i(LOG_TAG, "Exception :" + e.toString());
+                Toast.makeText(MainActivity.this, "Exception", Toast.LENGTH_SHORT).show();
             }
-
-            Log.i(LOG_TAG, url);
-
-            DyfiAsyncTask dyfi = new DyfiAsyncTask();
-            dyfi.execute(url);
-//            if (typeName.isEmpty()) {
-//                Toast.makeText(MainActivity.this, "Please enter search item!", Toast.LENGTH_SHORT).show();
-//                return;
-//            } else {
-//
-//            }
         } else {
             Log.i(LOG_TAG, "No connection");
             Toast.makeText(MainActivity.this, "No Internet Connectivity!", Toast.LENGTH_SHORT).show();
