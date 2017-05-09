@@ -18,8 +18,8 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.android.bustracker.directions.Bound;
 import com.example.android.bustracker.directions.Leg;
-import com.example.android.bustracker.directions.MyLocation;
 import com.example.android.bustracker.directions.Route;
 import com.example.android.bustracker.directions.Step;
 import com.google.android.gms.common.ConnectionResult;
@@ -34,6 +34,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Dot;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -74,7 +75,6 @@ public class RouteDetail extends FragmentActivity
         Intent intent = getIntent();
         route = (Route) intent.getParcelableExtra("currentRoute");
         leg = route.getLegs().get(0);
-
 
 //        TextView departView = (TextView) findViewById(R.id.estimated_depart);
 //        departView.setText(leg.getDeparture_time().getText());
@@ -213,9 +213,10 @@ public class RouteDetail extends FragmentActivity
                         .width(15));
             }
         }
-        MyLocation location = leg.getStart_location();
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(location.getLat(), location.getLng()), DEFAULT_ZOOM));
-
+        Bound bounds = route.getBounds();
+        LatLngBounds latLngBounds = new LatLngBounds(
+                bounds.getNortheast().toLatLng(),
+                bounds.getSouthwest().toLatLng());
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
     }
 }

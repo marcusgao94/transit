@@ -3,13 +3,15 @@ package com.example.android.bustracker.directions;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
+
 /**
- * Created by marcusgao on 2017/5/8.
+ * Created by marcusgao on 2017/5/9.
  */
 
 public class MyLocation implements Parcelable {
-    Double lat;
-    Double lng;
+    private Double lat;
+    private Double lng;
 
     public Double getLat() {
         return lat;
@@ -45,6 +47,11 @@ public class MyLocation implements Parcelable {
         this.lat = (Double) in.readValue(Double.class.getClassLoader());
         this.lng = (Double) in.readValue(Double.class.getClassLoader());
     }
+
+    public LatLng toLatLng() {
+        return new LatLng(lat, lng);
+    }
+
 
     public static final Parcelable.Creator<MyLocation> CREATOR = new Parcelable.Creator<MyLocation>() {
         @Override
