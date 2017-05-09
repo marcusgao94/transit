@@ -72,7 +72,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks, LocationListener, NavigationView.OnNavigationItemSelectedListener {
+        GoogleApiClient.ConnectionCallbacks, LocationListener,
+        GoogleMap.OnMapLongClickListener,
+        NavigationView.OnNavigationItemSelectedListener {
 
     private static String USGS_REQUEST_URL = "https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyAEBBlM76YfcI7of-9Q5UkTM2O_NBjGaNw";
 
@@ -326,6 +328,13 @@ public class MainActivity extends AppCompatActivity
         Log.d(LOG_TAG, "Play services connection suspended");
     }
 
+    @Override
+    public void onMapLongClick(LatLng latLng) {
+        end_name = (EditText)findViewById(R.id.type_end);
+        String text = String.valueOf(latLng.latitude) + "," + latLng.longitude;
+        end_name.setText(text);
+    }
+
     private class BusStationAsyncTask extends AsyncTask<Location,Void,BusStationResponse> {
         @Override
         protected BusStationResponse doInBackground(Location... locations) {
@@ -356,6 +365,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setOnMapLongClickListener(this);
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
             // Return null here, so that getInfoContents() is called next.
@@ -409,7 +419,9 @@ public class MainActivity extends AppCompatActivity
             Log.w(LOG_TAG, "Current location is null. Using defaults");
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
-            mMap.addMarker(new MarkerOptions()
+            if (marker == null)
+                marker.remove();
+            marker = mMap.addMarker(new MarkerOptions()
                     .position(mDefaultLocation)
                     .title("default location"));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
