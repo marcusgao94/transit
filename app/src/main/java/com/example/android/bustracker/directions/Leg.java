@@ -1,5 +1,6 @@
 package com.example.android.bustracker.directions;
 
+import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -24,6 +25,8 @@ public class Leg implements Parcelable {
     private Duration duration;
     private String start_address;
     private String end_address;
+    private MyLocation start_location;
+    private MyLocation end_location;
     private List<Step> steps;
 
     public Arrival_Time getArrival_time() {
@@ -74,12 +77,31 @@ public class Leg implements Parcelable {
         this.end_address = end_address;
     }
 
+    public MyLocation getStart_location() {
+        return start_location;
+    }
+
+    public void setStart_location(MyLocation start_location) {
+        this.start_location = start_location;
+    }
+
+    public MyLocation getEnd_location() {
+        return end_location;
+    }
+
+    public void setEnd_location(MyLocation end_location) {
+        this.end_location = end_location;
+    }
+
     public List<Step> getSteps() {
         return steps;
     }
 
     public void setSteps(List<Step> steps) {
         this.steps = steps;
+    }
+
+    public Leg() {
     }
 
     @Override
@@ -95,10 +117,9 @@ public class Leg implements Parcelable {
         dest.writeParcelable(this.duration, flags);
         dest.writeString(this.start_address);
         dest.writeString(this.end_address);
-        dest.writeList(this.steps);
-    }
-
-    public Leg() {
+        dest.writeParcelable(this.start_location, flags);
+        dest.writeParcelable(this.end_location, flags);
+        dest.writeTypedList(this.steps);
     }
 
     protected Leg(Parcel in) {
@@ -108,11 +129,12 @@ public class Leg implements Parcelable {
         this.duration = in.readParcelable(Duration.class.getClassLoader());
         this.start_address = in.readString();
         this.end_address = in.readString();
-        this.steps = new ArrayList<Step>();
-        in.readList(this.steps, Step.class.getClassLoader());
+        this.start_location = in.readParcelable(MyLocation.class.getClassLoader());
+        this.end_location = in.readParcelable(MyLocation.class.getClassLoader());
+        this.steps = in.createTypedArrayList(Step.CREATOR);
     }
 
-    public static final Parcelable.Creator<Leg> CREATOR = new Parcelable.Creator<Leg>() {
+    public static final Creator<Leg> CREATOR = new Creator<Leg>() {
         @Override
         public Leg createFromParcel(Parcel source) {
             return new Leg(source);

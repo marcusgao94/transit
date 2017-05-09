@@ -18,6 +18,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.android.bustracker.directions.Bound;
 import com.example.android.bustracker.directions.Leg;
 import com.example.android.bustracker.directions.Route;
 import com.example.android.bustracker.directions.Step;
@@ -27,12 +28,17 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Dot;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
@@ -56,7 +62,7 @@ public class RouteDetail extends FragmentActivity
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private final LatLng mDefaultLocation = new LatLng(40.453901, -79.943153);
-    private static final int DEFAULT_ZOOM = 15;
+    private static final int DEFAULT_ZOOM = 12;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private boolean mLocationPermissionGranted;
@@ -72,7 +78,6 @@ public class RouteDetail extends FragmentActivity
         Intent intent = getIntent();
         route = (Route) intent.getParcelableExtra("currentRoute");
         leg = route.getLegs().get(0);
-
 
 //        TextView departView = (TextView) findViewById(R.id.estimated_depart);
 //        departView.setText(leg.getDeparture_time().getText());
@@ -191,6 +196,16 @@ public class RouteDetail extends FragmentActivity
     }
 
     public void plotDirections() {
+        // show start and destination
+        mMap.addMarker(new MarkerOptions()
+                .position(leg.getStart_location().toLatLng())
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+        );
+        mMap.addMarker(new MarkerOptions()
+                .position(leg.getEnd_location().toLatLng())
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+        );
+        // show directions
         PolylineOptions busOptions = new PolylineOptions();
         List<PatternItem> patternItems = new ArrayList<>();
         PatternItem dot = new Dot();
@@ -211,5 +226,11 @@ public class RouteDetail extends FragmentActivity
                         .width(15));
             }
         }
+        // set bounds
+        Bound bounds = route.getBounds();
+        LatLngBounds latLngBounds = new LatLngBounds(
+                bounds.getSouthwest().toLatLng(),
+                bounds.getNortheast().toLatLng());
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 200));
     }
 }

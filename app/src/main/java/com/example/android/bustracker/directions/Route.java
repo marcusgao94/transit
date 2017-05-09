@@ -16,9 +16,18 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_NULL)
 public class Route implements Parcelable {
-    private Fare fare;
 
+    private Bound bounds;
+    private Fare fare;
     private List<Leg> legs;
+
+    public Bound getBounds() {
+        return bounds;
+    }
+
+    public void setBounds(Bound bounds) {
+        this.bounds = bounds;
+    }
 
     public Fare getFare() {
         return fare;
@@ -36,6 +45,9 @@ public class Route implements Parcelable {
         this.legs = legs;
     }
 
+    public Route() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -43,19 +55,18 @@ public class Route implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.bounds, flags);
         dest.writeParcelable(this.fare, flags);
         dest.writeTypedList(this.legs);
     }
 
-    public Route() {
-    }
-
     protected Route(Parcel in) {
+        this.bounds = in.readParcelable(Bound.class.getClassLoader());
         this.fare = in.readParcelable(Fare.class.getClassLoader());
         this.legs = in.createTypedArrayList(Leg.CREATOR);
     }
 
-    public static final Parcelable.Creator<Route> CREATOR = new Parcelable.Creator<Route>() {
+    public static final Creator<Route> CREATOR = new Creator<Route>() {
         @Override
         public Route createFromParcel(Parcel source) {
             return new Route(source);

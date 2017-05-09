@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -43,6 +44,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.android.bustracker.bus_station.BusStation;
+import com.example.android.bustracker.bus_station.BusStationResponse;
 import com.example.android.bustracker.directions.Direction;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -54,16 +57,24 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PatternItem;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks, LocationListener, NavigationView.OnNavigationItemSelectedListener {
+        GoogleApiClient.ConnectionCallbacks, LocationListener,
+        GoogleMap.OnMapLongClickListener,
+        NavigationView.OnNavigationItemSelectedListener {
 
     private static String USGS_REQUEST_URL = "https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyAEBBlM76YfcI7of-9Q5UkTM2O_NBjGaNw";
 
@@ -90,8 +101,9 @@ public class MainActivity extends AppCompatActivity
 
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    private GoogleMap mMap;
+    private MyAPIClient myAPIClient;
     private GoogleApiClient mGoogleApiClient;
+    private GoogleMap mMap;
     private final LatLng mDefaultLocation = new LatLng(40.453901, -79.943153);
     private static final int DEFAULT_ZOOM = 15;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -99,6 +111,7 @@ public class MainActivity extends AppCompatActivity
     private boolean mLocationPermissionGranted;
     private Location mLastLocation;
     private Marker marker;
+    private Circle circle;
 
 
     @Override
@@ -106,6 +119,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.i(LOG_TAG, "OnCreate is called");
+
+        myAPIClient = new MyAPIClient();
 
         /**-----------------------------Set a Toolbar to replace the ActionBar.---------------------------*/
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -283,7 +298,7 @@ public class MainActivity extends AppCompatActivity
                         mGoogleApiClient, mLocationRequest, this);
             }
             else {
-                updateMap();
+                new BusStationAsyncTask().execute(mLastLocation);
             }
         }
         else {
@@ -314,16 +329,43 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onMapLongClick(LatLng latLng) {
+        end_name = (EditText)findViewById(R.id.type_end);
+        String text = String.valueOf(latLng.latitude) + "," + latLng.longitude;
+        end_name.setText(text);
+    }
+
+    private class BusStationAsyncTask extends AsyncTask<Location,Void,BusStationResponse> {
+        @Override
+        protected BusStationResponse doInBackground(Location... locations) {
+            if (locations.length < 1 || locations[0] == null) {
+                return null;
+            }
+            BusStationResponse bsr = myAPIClient.getBusStops(locations[0]);
+            return bsr;
+        }
+
+        @Override
+        protected void onPostExecute(BusStationResponse bsr) {
+            if (bsr == null || !bsr.getStatus().equals("OK"))
+                updateMap(null);
+            else
+                updateMap(bsr.getResults());
+        }
+    }
+
+    @Override
     public void onLocationChanged(final Location location) {
         //your code here
         Log.w(LOG_TAG, "location changed");
         mLastLocation = location;
-        updateMap();
+        new BusStationAsyncTask().execute(location);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setOnMapLongClickListener(this);
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
             // Return null here, so that getInfoContents() is called next.
@@ -345,31 +387,47 @@ public class MainActivity extends AppCompatActivity
                 return infoWindow;
             }
         });
-        updateMap();
+        updateMap(null);
     }
 
-    public void updateMap() {
+    public void updateMap(List<BusStation> busStations) {
         if (mLastLocation != null) {
             if (marker != null)
                 marker.remove();
-            marker = mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(
-                            mLastLocation.getLatitude(),
+            circle = mMap.addCircle(new CircleOptions()
+                    .center(new LatLng(mLastLocation.getLatitude(),
                             mLastLocation.getLongitude()))
-                    .title("Team Six's here ^_^"));
+                    .radius(20.0)
+                    .fillColor(Color.BLUE)
+                    .strokeWidth(10)
+                    .strokeColor(Color.WHITE));
+
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(mLastLocation.getLatitude(),
                             mLastLocation.getLongitude()), DEFAULT_ZOOM));
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
+            if (busStations != null) {
+                for (int i = 0; i < Math.min(3, busStations.size()); i++) {
+                    BusStation bs = busStations.get(i);
+                    mMap.addMarker(new MarkerOptions()
+                            .position(bs.getGeometry().getLocation().toLatLng())
+                            .title(bs.getName()));
+                }
+            }
+
         } else {
             Log.w(LOG_TAG, "Current location is null. Using defaults");
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            if (marker == null)
+                marker.remove();
+            marker = mMap.addMarker(new MarkerOptions()
+                    .position(mDefaultLocation)
+                    .title("default location"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    mDefaultLocation, DEFAULT_ZOOM));
         }
     }
-
-
-
 
     // Text input and search bar
 
@@ -379,8 +437,7 @@ public class MainActivity extends AppCompatActivity
             if (urls.length < 1 || urls[0] == null) {
                 return null;
             }
-            MyAPIClient myClient = new MyAPIClient(urls[0]);
-            Direction direction = myClient.getDirections();
+            Direction direction = myAPIClient.getDirections(urls[0]);
 
             return direction;
         }
