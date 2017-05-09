@@ -12,8 +12,11 @@ import com.example.android.bustracker.directions.Leg;
 import com.example.android.bustracker.directions.Route;
 import com.example.android.bustracker.directions.Step;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+
 
 /**
  * Created by yishuyan on 5/1/17.
@@ -50,12 +53,34 @@ public class BusInfoAdapter extends ArrayAdapter<Route> {
                 break;
             }
         }
-        Log.i(LOG_TAG, "until here + after position");
+//        Log.i(LOG_TAG, "until here + after position");
+        String departTime = leg.getDeparture_time().getText();
         TextView routeName = (TextView) listView.findViewById(R.id.departTime);
-        routeName.setText(leg.getDeparture_time().getText());
+        routeName.setText(departTime);
 
         TextView routes = (TextView) listView.findViewById(R.id.arrivalTime);
         routes.setText(leg.getArrival_time().getText());
+
+        Calendar c = Calendar.getInstance();
+        System.out.println("Current time => "+c.getTime());
+
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+        String formattedDate = df.format(c.getTime());
+        String[] timeSplit = formattedDate.split(":");
+        String[] departSplit = departTime.split(":");
+        int currMinute = Integer.valueOf(timeSplit[1]);
+        Log.i(LOG_TAG, "Current Minute : " + currMinute);
+        int leftMinute = Integer.valueOf(departSplit[1].substring(0,2));
+        Log.i(LOG_TAG, "Left Minute : " + leftMinute);
+        int resMinute = leftMinute - currMinute;
+        if (resMinute < 0) {
+            resMinute = resMinute + 60;
+        }
+        Log.i(LOG_TAG, "time left" + resMinute);
+        TextView leftTime = (TextView) listView.findViewById(R.id.left_time);
+        leftTime.setText(resMinute + "");
+
+
 
         TextView routeNum = (TextView) listView.findViewById(R.id.bus_Num);
         routeNum.setText(route_name);
