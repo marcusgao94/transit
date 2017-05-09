@@ -81,9 +81,9 @@ public class RouteDetail extends FragmentActivity
 //        arrivalView.setText(leg.getArrival_time().getText());
 //        TextView distanceView = (TextView) findViewById(R.id.total_distance);
 //        distanceView.setText(leg.getDistance().getText());
-//
-//        TextView durationView = (TextView) findViewById(R.id.total_time);
-//        durationView.setText(leg.getDuration().getText());
+
+        TextView durationView = (TextView) findViewById(R.id.total_time);
+        durationView.setText(leg.getDuration().getText());
 
         listView = (ListView) findViewById(R.id.step_view);
         List<Step> stepList = leg.getSteps();

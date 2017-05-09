@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.bustracker.directions.Step;
@@ -32,7 +33,9 @@ public class StepsAdapter extends ArrayAdapter<Step> {
         Step currentStep = getItem(position);
 
         TextView travel_mode = (TextView) listView.findViewById(R.id.travel_mode);
-        travel_mode.setText(currentStep.getTravel_mode());
+        ImageView imageView = (ImageView) listView.findViewById(R.id.mode_icon);
+        TextView infoView = (TextView) listView.findViewById(R.id.transit_info);
+        TextView stopNum = (TextView) listView.findViewById(R.id.stops_num);
 
 //        TextView transit_distance = (TextView) listView.findViewById(R.id.transit_distance);
 //        transit_distance.setText(currentStep.getDistance().getText());
@@ -40,15 +43,26 @@ public class StepsAdapter extends ArrayAdapter<Step> {
 //        TextView transit_duration = (TextView) listView.findViewById(R.id.transit_duration);
 //        transit_duration.setText(currentStep.getDuration().getText());
 
-        if (currentStep.getTravel_mode().equals("TRANSIT")) {
-            TextView lineNum = (TextView) listView.findViewById(R.id.line_num);
-            lineNum.setText(currentStep.getTransit_details().getNum_stops() + "");
+        String mode = currentStep.getTravel_mode();
 
-            TextView departStop = (TextView) listView.findViewById(R.id.depart_stop);
-            departStop.setText(currentStep.getTransit_details().getDeparture_stop().getName());
+        if (mode.equals("TRANSIT")) {
+            imageView.setImageResource(R.drawable.bus);
 
-            TextView departTime = (TextView) listView.findViewById(R.id.depart_at);
-            departTime.setText(currentStep.getTransit_details().getDeparture_time().getText());
+            String transitMode = mode + "    " + currentStep.getTransit_details().getLine().getShort_name() + " ";
+
+            travel_mode.setText(transitMode);
+
+            String departAt = currentStep.getTransit_details().getDeparture_time().getText();
+            String departFrom = currentStep.getTransit_details().getDeparture_stop().getName();
+            String transitInfo = departAt + " from " + departFrom;
+
+            infoView.setText(transitInfo);
+
+
+//            stopNum.setText(currentStep.getTransit_details().getNum_stops() + "");
+//            stopNum.setVisibility(View.VISIBLE);
+
+
 
 //            TextView arrivalStop = (TextView) listView.findViewById(R.id.arrive_stop);
 //            arrivalStop.setText(currentStep.getTransit_details().getArrival_stop().getName());
@@ -56,8 +70,15 @@ public class StepsAdapter extends ArrayAdapter<Step> {
 //            TextView arriveTime = (TextView) listView.findViewById(R.id.arrive_at);
 //            arriveTime.setText(currentStep.getTransit_details().getArrival_time().getText());
 
-        }
+        } else {
 
+            imageView.setImageResource(R.drawable.walk);
+
+            travel_mode.setText(mode);
+            String duration = currentStep.getDuration().getText();
+            infoView.setText(duration);
+//            stopNum.setVisibility(View.INVISIBLE);
+        }
 
         return listView;
     }
