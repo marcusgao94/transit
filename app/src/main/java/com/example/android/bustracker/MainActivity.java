@@ -357,7 +357,7 @@ public class MainActivity extends AppCompatActivity
                     .position(new LatLng(
                             mLastLocation.getLatitude(),
                             mLastLocation.getLongitude()))
-                    .title("Team Six's here ^_^"));
+                    .title("You are here"));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(mLastLocation.getLatitude(),
                             mLastLocation.getLongitude()), DEFAULT_ZOOM));
@@ -366,11 +366,13 @@ public class MainActivity extends AppCompatActivity
             Log.w(LOG_TAG, "Current location is null. Using defaults");
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            mMap.addMarker(new MarkerOptions()
+                    .position(mDefaultLocation)
+                    .title("default location"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    mDefaultLocation, DEFAULT_ZOOM));
         }
     }
-
-
-
 
     // Text input and search bar
 

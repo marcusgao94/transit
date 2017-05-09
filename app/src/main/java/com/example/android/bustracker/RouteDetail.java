@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.android.bustracker.directions.Leg;
+import com.example.android.bustracker.directions.MyLocation;
 import com.example.android.bustracker.directions.Step;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -26,6 +27,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -55,7 +57,7 @@ public class RouteDetail extends FragmentActivity
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private final LatLng mDefaultLocation = new LatLng(40.453901, -79.943153);
-    private static final int DEFAULT_ZOOM = 15;
+    private static final int DEFAULT_ZOOM = 12;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private boolean mLocationPermissionGranted;
@@ -207,5 +209,9 @@ public class RouteDetail extends FragmentActivity
                         .width(15));
             }
         }
+        MyLocation location = leg.getStart_location();
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(location.getLat(), location.getLng()), DEFAULT_ZOOM));
+
     }
 }
