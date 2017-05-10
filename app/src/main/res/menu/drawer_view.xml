@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_first_fragment"
@@ -13,7 +14,10 @@
             android:title="@string/nv_third" />
         <item
             android:id="@+id/nav_forth_fragment"
-            android:title="@string/nv_forth"/>
+            android:title="@string/nv_forth"
+            app:showAsAction="always"
+            app:actionLayout="@layout/layout_switch"
+            />
         <item
             android:id="@+id/nav_fifth_fragment"
             android:title="@string/nv_fifth" />

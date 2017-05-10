@@ -328,9 +328,9 @@ public class MainActivity extends AppCompatActivity
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             LocationRequest mLocationRequest = LocationRequest.create()
                     .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                    .setInterval(5000)
-                    .setFastestInterval(1000)
-                    .setMaxWaitTime(5000);
+                    .setInterval(10000)
+                    .setFastestInterval(10000)
+                    .setMaxWaitTime(10000);
             LocationServices.FusedLocationApi.requestLocationUpdates(
                     mGoogleApiClient, mLocationRequest, this);
             new BusStationAsyncTask().execute(mLastLocation);
