@@ -19,8 +19,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -226,25 +224,24 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment fragment = null;
-        switch(id) {
-            case R.id.nav_first_fragment:
-                fragment = new LoginActivity();
-                break;
-            case R.id.nav_second_fragment:
-                fragment = new LoginActivity();
-                break;
-            case R.id.nav_third_fragment:
-                fragment = new PreferenceActivity();
-                break;
-            default:
-                fragment = new LoginActivity();
-                break;
-        }
-        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+        switch(id) {
+            case R.id.nav_first_fragment:
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                break;
+            case R.id.nav_second_fragment:
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                break;
+            case R.id.nav_third_fragment:
+                startActivity(new Intent(MainActivity.this, PreferenceActivity.class));
+                break;
+            default:
+//                fragment = new LoginActivity();
+                break;
+        }
+
+
         return true;
     }
 
