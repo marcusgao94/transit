@@ -1,6 +1,8 @@
 package com.example.android.bustracker;
 
 import android.app.Activity;
+import android.content.res.AssetManager;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import com.example.android.bustracker.directions.Step;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by yishuyan on 5/6/17.
@@ -20,6 +23,9 @@ import java.util.List;
 public class StepsAdapter extends ArrayAdapter<Step> {
     public static final String LOG_TAG = BusInfoAdapter.class.getSimpleName();
     private List<Step> stepList = new ArrayList<>();
+    AssetManager am = getContext().getApplicationContext().getAssets();
+    Typeface typeface = Typeface.createFromAsset(am, String.format(Locale.US, "fonts/MontserratAlternates-SemiBold.otf"));
+
     public StepsAdapter(Activity context, List<Step> steps) {
         super(context, 0, steps);
         stepList = steps;
@@ -33,9 +39,12 @@ public class StepsAdapter extends ArrayAdapter<Step> {
         Step currentStep = getItem(position);
 
         TextView travel_mode = (TextView) listView.findViewById(R.id.travel_mode);
+        travel_mode.setTypeface(typeface);
         ImageView imageView = (ImageView) listView.findViewById(R.id.mode_icon);
         TextView infoView = (TextView) listView.findViewById(R.id.transit_info);
+        infoView.setTypeface(typeface);
         TextView stopNum = (TextView) listView.findViewById(R.id.stops_num);
+        stopNum.setTypeface(typeface);
 
 //        TextView transit_distance = (TextView) listView.findViewById(R.id.transit_distance);
 //        transit_distance.setText(currentStep.getDistance().getText());

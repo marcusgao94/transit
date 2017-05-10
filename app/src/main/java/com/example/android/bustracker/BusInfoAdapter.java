@@ -1,6 +1,8 @@
 package com.example.android.bustracker;
 
 import android.app.Activity;
+import android.content.res.AssetManager;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -24,7 +27,12 @@ import java.util.List;
 
 public class BusInfoAdapter extends ArrayAdapter<Route> {
     public static final String LOG_TAG = BusInfoAdapter.class.getSimpleName();
+
     private List<Route> busList = new ArrayList<>();
+
+    AssetManager am = getContext().getApplicationContext().getAssets();
+    Typeface typeface = Typeface.createFromAsset(am, String.format(Locale.US, "fonts/MontserratAlternates-Black.otf"));
+
     public BusInfoAdapter(Activity context, List<Route> routes) {
         super(context, 0, routes);
         busList = routes;
@@ -56,9 +64,11 @@ public class BusInfoAdapter extends ArrayAdapter<Route> {
 //        Log.i(LOG_TAG, "until here + after position");
         String departTime = leg.getDeparture_time().getText();
         TextView routeName = (TextView) listView.findViewById(R.id.departTime);
+        routeName.setTypeface(typeface);
         routeName.setText(departTime);
 
         TextView routes = (TextView) listView.findViewById(R.id.arrivalTime);
+        routes.setTypeface(typeface);
         routes.setText(leg.getArrival_time().getText());
 
         Calendar c = Calendar.getInstance();
@@ -78,15 +88,24 @@ public class BusInfoAdapter extends ArrayAdapter<Route> {
         }
         Log.i(LOG_TAG, "time left" + resMinute);
         TextView leftTime = (TextView) listView.findViewById(R.id.left_time);
+        leftTime.setTypeface(typeface);
         leftTime.setText(resMinute + "");
-
+        if (resMinute < 5) {
+            listView.setBackgroundResource(R.color.hurry);
+        } else if (resMinute > 10) {
+            listView.setBackgroundResource(R.color.calm_down);
+        } else {
+            listView.setBackgroundResource(R.color.prepare);
+        }
 
 
         TextView routeNum = (TextView) listView.findViewById(R.id.bus_Num);
         routeNum.setText(route_name);
+        routeNum.setTypeface(typeface);
 
         TextView departStop = (TextView) listView.findViewById(R.id.destination);
         departStop.setText(depart_stop);
+        departStop.setTypeface(typeface);
 
 
         return listView;

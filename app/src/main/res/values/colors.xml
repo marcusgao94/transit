@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#183E70</color>
+    <color name="colorPrimaryDark">#28F0DF</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="edit">#E6EBF3</color>
+
+    <!--Route Detail-->
+    <color name="hurry">#DD4949</color>
+    <color name="prepare">#62AD38</color>
+    <color name="calm_down">#4988DD</color>
 
     <color name="attraction_des">#BBDEFB</color>
     <color name="attraction_address">#2196F3</color>
