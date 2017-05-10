@@ -9,14 +9,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/start"
-        android:shadowColor="@color/edit"/>
+        android:shadowColor="@color/edit">
+
+    </EditText>
 
     <EditText
         android:id="@+id/type_end"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/end" /-->
+        android:hint="@string/end" >
 
+    </EditText-->
     <fragment
         android:id="@+id/type_start"
         android:layout_width="match_parent"
@@ -24,11 +27,10 @@
         android:hint="@string/start"
         android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
         />
-
     <fragment
         android:id="@+id/type_end"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:hint="@string/end"
         android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
         />
