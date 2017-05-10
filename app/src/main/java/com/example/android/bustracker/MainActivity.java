@@ -385,7 +385,10 @@ public class MainActivity extends AppCompatActivity
         new BusStationAsyncTask().execute(location);
     }
 
-
+    @Override
+    public void onCameraIdle() {
+        ZOOM_LEVEL = mMap.getCameraPosition().zoom;
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -398,6 +401,7 @@ public class MainActivity extends AppCompatActivity
 //            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         }
         mMap.setOnMapLongClickListener(this);
+        mMap.setOnCameraIdleListener(this);
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
             // Return null here, so that getInfoContents() is called next.
@@ -447,10 +451,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onCameraIdle() {
-        ZOOM_LEVEL = mMap.getCameraPosition().zoom;
-    }
+
 
     private class BusStationAsyncTask extends AsyncTask<Location, Void, BusStationResponse> {
         @Override
