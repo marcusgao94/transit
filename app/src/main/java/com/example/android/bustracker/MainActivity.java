@@ -370,10 +370,12 @@ public class MainActivity extends AppCompatActivity
         try {
             Address address = geocoder
                     .getFromLocation(latLng.latitude, latLng.longitude, 1).get(0);
-            endFragment.setText(address.getAddressLine(0) + ", " + address.getLocality());
+            end_place = address.getAddressLine(0);
+            endFragment.setText(end_place);
         } catch (Exception e) {
             e.printStackTrace();
-            endFragment.setText(String.format("%.6f, %.6f", latLng.latitude, latLng.longitude));
+            end_place = String.format("%.6f, %.6f", latLng.latitude, latLng.longitude);
+            endFragment.setText(end_place);
         }
     }
 
