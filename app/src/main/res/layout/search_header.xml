@@ -8,7 +8,8 @@
         android:id="@+id/type_start"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/start" />
+        android:hint="@string/start"
+        android:shadowColor="@color/edit"/>
 
     <EditText
         android:id="@+id/type_end"
@@ -33,31 +34,37 @@
         />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <Spinner
             android:id="@+id/spinner1"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:entries="@array/time_options"
-            android:prompt="@string/time_select" />
+            android:prompt="@string/time_select"
+            android:padding="10dp"/>
 
         <Button
             android:id="@+id/depart_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:layout_weight="1"
+            android:background="@drawable/round_button"
             android:onClick="showTimePickerDialog"
-            android:text="@string/depart_time" />
+            android:text="@string/depart_time"
+            android:textIsSelectable="true" />
 
         <Button
             android:id="@+id/depart_date"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_margin="10dp"
             android:onClick="showDatePickerDialog"
+            android:background="@drawable/round_button"
             android:text="@string/depart_date" />
 
         <Button
@@ -65,6 +72,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:background="@drawable/round_button"
             android:text="@string/search" />
     </LinearLayout>
 </LinearLayout>

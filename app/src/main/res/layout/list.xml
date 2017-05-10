@@ -22,6 +22,7 @@
                 android:text="5"
                 android:layout_width="80sp"
                 android:gravity="center"
+                android:textColor="@color/edit"
                 style="@style/StopInfoRoute">
             </TextView>
             <LinearLayout
@@ -33,8 +34,8 @@
                     style="@style/StopInfoDestination"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="North to Univerity Area TC"
                     android:ellipsize="end"
+                    android:textColor="@color/edit"
                     android:singleLine="true">
                 </TextView>
                 <LinearLayout
@@ -44,6 +45,7 @@
                     <TextView
                         android:id="@+id/departTime"
                         style="@style/StopInfoTime"
+                        android:textColor="@color/edit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
                     </TextView>
@@ -51,12 +53,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=" -- "
-                        android:textColor="@color/ArrivalTime"/>
+                        android:textStyle="bold"
+                        android:textColor="@color/edit"/>
                     <TextView
                         android:id="@+id/arrivalTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/ArrivalTime"/>
+                        android:textColor="@color/edit"/>
                 </LinearLayout>
             </LinearLayout>
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -73,12 +76,13 @@
                 android:gravity="right"
                 android:orientation="horizontal">
                 <TextView
-                    android:id="@+id/eta"
+                    android:id="@+id/left_time"
                     style="@style/StopInfoEta"
                     android:text="12"
                     android:maxLines="1"
                     android:gravity="right"
                     android:layout_width="wrap_content"
+                    android:textColor="@color/edit"
                     android:layout_height="wrap_content">
                 </TextView>
                 <TextView
@@ -88,11 +92,12 @@
                     android:textSize="14sp"
                     android:text="min"
                     android:ellipsize="end"
+                    android:textColor="@color/edit"
                     android:singleLine="true"
                     android:textIsSelectable="false"
                     android:layout_marginLeft="5dp"
-                    android:layout_toRightOf="@id/eta"
-                    android:layout_alignBaseline="@id/eta"
+                    android:layout_toRightOf="@id/left_time"
+                    android:layout_alignBaseline="@id/left_time"
                     android:gravity="bottom"/>
             </RelativeLayout>
         </TableRow>
