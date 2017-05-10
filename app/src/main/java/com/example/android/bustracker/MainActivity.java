@@ -88,7 +88,8 @@ public class MainActivity extends AppCompatActivity
 
 
     BusInfoAdapter adapter;
-    private EditText start_name, end_name, stop_id;
+    private PlaceAutocompleteFragment startFragment, endFragment;
+    private String start_place, end_place;
     private String url;
     ListView listView;
     // Record if the leave now, or arrive by, or depart at.
@@ -118,8 +119,6 @@ public class MainActivity extends AppCompatActivity
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private boolean mLocationPermissionGranted;
     private Location mLastLocation;
-    private Marker marker;
-    private Circle circle;
 
 
     @Override
@@ -146,13 +145,14 @@ public class MainActivity extends AppCompatActivity
 
 
         /*----------------------set auto complete fragment------------------------*/
-        final PlaceAutocompleteFragment startFragment = (PlaceAutocompleteFragment)
+        startFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.type_start);
         startFragment.setHint("From");
         startFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                startFragment.setText(place.getAddress());
+                start_place = place.getAddress().toString();
+                startFragment.setText(start_place);
             }
 
             @Override
@@ -160,13 +160,14 @@ public class MainActivity extends AppCompatActivity
                 Log.e(LOG_TAG, "start place selection error");
             }
         });
-        final PlaceAutocompleteFragment endFragment = (PlaceAutocompleteFragment)
+        endFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.type_end);
         endFragment.setHint("To");
         endFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                endFragment.setText(place.getAddress());
+                end_place = place.getAddress().toString();
+                endFragment.setText(end_place);
             }
 
             @Override
@@ -285,7 +286,10 @@ public class MainActivity extends AppCompatActivity
                 fragment = new LoginActivity();
                 break;
         }
-        fragmentManager.beginTransaction().replace(R.id.map, fragment).commit();
+        fragmentManager.beginTransaction()
+                .replace(R.id.map, fragment)
+                .addToBackStack(null)
+                .commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -366,14 +370,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        end_name = (EditText) findViewById(R.id.type_end);
+        // change end_name from EditText to PlaceAutoCompleteFragment
         Geocoder geocoder = new Geocoder(this, Locale.US);
         try {
-            List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-            end_name.setText(addresses.get(0).getAddressLine(0));
+            Address address = geocoder
+                    .getFromLocation(latLng.latitude, latLng.longitude, 1).get(0);
+            endFragment.setText(address.getAddressLine(0) + ", " + address.getLocality());
         } catch (Exception e) {
             e.printStackTrace();
-            end_name.setText(String.format("%.6f, %.6f", latLng.latitude, latLng.longitude));
+            endFragment.setText(String.format("%.6f, %.6f", latLng.latitude, latLng.longitude));
         }
     }
 
@@ -388,9 +393,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMyLocationEnabled(true);
-        mMap.getUiSettings().setMyLocationButtonEnabled(true);
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(true);
+//            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        }
         mMap.setOnMapLongClickListener(this);
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
@@ -419,12 +428,11 @@ public class MainActivity extends AppCompatActivity
 
     public void updateMap(List<BusStation> busStations) {
         if (mLastLocation != null) {
-            if (marker != null)
-                marker.remove();
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(mLastLocation.getLatitude(),
                             mLastLocation.getLongitude()), DEFAULT_ZOOM));
             if (busStations != null) {
+                mMap.clear();
                 for (int i = 0; i < Math.min(3, busStations.size()); i++) {
                     BusStation bs = busStations.get(i);
                     mMap.addMarker(new MarkerOptions()
@@ -437,8 +445,6 @@ public class MainActivity extends AppCompatActivity
             Log.w(LOG_TAG, "Current location is null. Using defaults");
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
-            if (marker != null)
-                marker.remove();
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     mDefaultLocation, DEFAULT_ZOOM));
         }
@@ -489,20 +495,16 @@ public class MainActivity extends AppCompatActivity
         if (isConnectedNetwork(this)) {
             try {
                 Log.i(LOG_TAG, "Connected");
-                start_name = (EditText) findViewById(R.id.type_start);
-                String start_place = start_name.getText().toString().replace(" ", "+");
-
-                end_name = (EditText) findViewById(R.id.type_end);
-
-                String end_place = end_name.getText().toString().replace(" ", "+");
-                if (end_place.matches("")) {
-                    Toast.makeText(MainActivity.this, "Please enter search item!", Toast.LENGTH_SHORT).show();
+                Log.w(LOG_TAG, String.valueOf(R.id.type_start));
+                if (end_place == null || end_place.isEmpty()) {
+                    Toast.makeText(MainActivity.this, "Please enter and select destination!",
+                            Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 long time = convertTime(dateString, timeString);
                 url = USGS_REQUEST_URL + "&origin="
-                        + start_place + "+Pittsburgh&destination=" + end_place + "+Pittsburgh";
+                        + start_place + "&destination=" + end_place + "";
 
                 if (time != 0) {
                     // time selected
@@ -525,7 +527,7 @@ public class MainActivity extends AppCompatActivity
                 DyfiAsyncTask dyfi = new DyfiAsyncTask();
                 dyfi.execute(url);
             } catch (Exception e) {
-                Log.i(LOG_TAG, "Exception :" + e.toString());
+                Log.e(LOG_TAG, "Exception :" + e.toString());
                 Toast.makeText(MainActivity.this, "Exception", Toast.LENGTH_SHORT).show();
             }
         } else {
