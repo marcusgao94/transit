@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -18,12 +17,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -32,16 +28,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -53,7 +52,6 @@ import com.example.android.bustracker.directions.Direction;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -65,19 +63,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.text.DecimalFormat;
-import java.text.Format;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.SimpleFormatter;
 
 public class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,
@@ -93,6 +86,7 @@ public class MainActivity extends AppCompatActivity
     private String start_place, end_place;
     private String url;
     ListView listView;
+    private PopupWindow pw;
     // Record if the leave now, or arrive by, or depart at.
     private String timeOptions;
     private static String timeString;
@@ -205,16 +199,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        /**-----------------------------Add floating button in main Page, to check the upcoming bus.---------------------------*/
-        FloatingActionButton addButton = (FloatingActionButton) findViewById(R.id.add);
 
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, LatestRouteActivity.class);
-                startActivity(intent);
-            }
-        });
 
 
         /**-----------------------------Add Google Map in main page.---------------------------*/
@@ -283,6 +268,8 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_third_fragment:
                 startActivity(new Intent(MainActivity.this, PreferenceActivity.class));
                 break;
+            case R.id.nav_forth_fragment:
+                initiatePopupWindow();
             default:
 //                fragment = new LoginActivity();
                 break;
@@ -651,5 +638,29 @@ public class MainActivity extends AppCompatActivity
             // TODO Auto-generated method stub
         }
 
+    }
+
+    private void initiatePopupWindow() {
+        try {
+            LayoutInflater inflater = (LayoutInflater) MainActivity.this
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View layout = inflater.inflate(R.layout.popup_layout,
+                    (ViewGroup) findViewById(R.id.popup_element));
+            pw = new PopupWindow(layout, 800, 1000, true);
+            pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
+
+            TextView showText = (TextView) layout.findViewById(R.id.popup_window);
+            Button cancelButton = (Button) layout.findViewById(R.id.agree_button);
+            Button cancelButton2 = (Button) layout.findViewById(R.id.disagree_button);
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    pw.dismiss();
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
