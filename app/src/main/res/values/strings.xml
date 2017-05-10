@@ -8,7 +8,7 @@
 
     <string name="start">From</string>
     <string name="end">To</string>
-    <string name="search">-></string>
+    <string name="search">--></string>
 
     <string name="default_msg">Please Input Your Search Items</string>
     <string name="stop_id">Type a stop station id</string>
@@ -22,8 +22,8 @@
     <string name="estimated_arrive">   Arrival Time : </string>
 
 
-    <string name="nv_first">Find Nearest Bus Stop</string>
-    <string name="nv_second">Trip Planner</string>
+    <string name="nv_first">Login</string>
+    <string name="nv_second">Refill Card</string>
     <string name="nv_third">Preferences</string>
     <string name="nv_forth">Notifications</string>
     <string name="nv_fifth">Setting</string>

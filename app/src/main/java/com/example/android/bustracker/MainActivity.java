@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -226,12 +227,14 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
+        Uri webpage = Uri.parse("http://connectcard.org/nowonline.aspx");
         switch(id) {
             case R.id.nav_first_fragment:
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 break;
             case R.id.nav_second_fragment:
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                startActivity(new Intent(Intent.ACTION_VIEW, webpage));
                 break;
             case R.id.nav_third_fragment:
                 startActivity(new Intent(MainActivity.this, PreferenceActivity.class));

@@ -54,6 +54,7 @@
             android:layout_weight="1"
             android:background="@drawable/round_button"
             android:onClick="showTimePickerDialog"
+            android:textColor="@color/edit"
             android:text="@string/depart_time"
             android:textIsSelectable="true" />
 
@@ -62,6 +63,7 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="@color/edit"
             android:layout_margin="10dp"
             android:onClick="showDatePickerDialog"
             android:background="@drawable/round_button"
@@ -73,7 +75,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="10dp"
+            android:textColor="@color/edit"
             android:background="@drawable/round_button"
-            android:text="@string/search" />
+            android:text="@string/search"
+            android:textStyle="bold"/>
     </LinearLayout>
 </LinearLayout>
