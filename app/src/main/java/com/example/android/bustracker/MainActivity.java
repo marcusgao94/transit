@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity
     private MyAPIClient myAPIClient;
     private GoogleApiClient mGoogleApiClient;
     private GoogleMap mMap;
-    private final LatLng mDefaultLocation = new LatLng(40.453901, -79.943153);
+    private final LatLng mDefaultLocation = new LatLng(40.4438, -79.9438);
     private static final int DEFAULT_ZOOM = 15;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -423,6 +423,7 @@ public class MainActivity extends AppCompatActivity
 
     public void updateMap(List<BusStation> busStations) {
         if (mLastLocation != null) {
+            Log.w(LOG_TAG, mLastLocation.toString());
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(mLastLocation.getLatitude(),
                             mLastLocation.getLongitude()), DEFAULT_ZOOM));
@@ -489,6 +490,14 @@ public class MainActivity extends AppCompatActivity
             try {
                 Log.i(LOG_TAG, "Connected");
                 Log.w(LOG_TAG, String.valueOf(R.id.type_start));
+                if (start_place == null || start_place.isEmpty()) {
+                    if (mLastLocation != null)
+                        start_place = String.format("%.6f, %.6f",
+                                mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                    else
+                        start_place = String.format("%.6f, %.6f",
+                                mDefaultLocation.latitude, mDefaultLocation.longitude);
+                }
                 if (end_place == null || end_place.isEmpty()) {
                     Toast.makeText(MainActivity.this, "Please enter and select destination!",
                             Toast.LENGTH_SHORT).show();

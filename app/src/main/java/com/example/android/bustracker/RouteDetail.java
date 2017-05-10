@@ -153,11 +153,6 @@ public class RouteDetail extends FragmentActivity
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        // Build the map.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.mapdir);
-        mapFragment.getMapAsync(this);
-
         // request location
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -231,6 +226,9 @@ public class RouteDetail extends FragmentActivity
         LatLngBounds latLngBounds = new LatLngBounds(
                 bounds.getSouthwest().toLatLng(),
                 bounds.getNortheast().toLatLng());
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 200));
+        int height = (int)(getResources().getDisplayMetrics().heightPixels * 0.5);
+        int width = getResources().getDisplayMetrics().widthPixels;
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, height, width, 100));
+//        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
     }
 }
