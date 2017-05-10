@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         /**After press the search button, the list of buses will be displayed on the screen. */
-        final Button searchButton = (Button) findViewById(R.id.search_button);
+        final Button searchButton = (Button)findViewById(R.id.search_button);
         listView = (ListView) findViewById(R.id.list_view);
 
         timeSpinner = (Spinner) findViewById(R.id.spinner1);
@@ -230,9 +230,7 @@ public class MainActivity extends AppCompatActivity
         mGoogleApiClient.connect();
     }
 
-    /**
-     * -----------------------------The code below is about the navigation bar.---------------------------
-     */
+    /**-----------------------------The code below is about the navigation bar.---------------------------*/
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -270,35 +268,29 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment fragment = null;
-        switch (id) {
-            case R.id.nav_first_fragment:
-                fragment = new LoginActivity();
-                break;
-            case R.id.nav_second_fragment:
-                fragment = new LoginActivity();
-                break;
-            case R.id.nav_third_fragment:
-                fragment = new PreferenceActivity();
-                break;
-            default:
-                fragment = new LoginActivity();
-                break;
-        }
-        fragmentManager.beginTransaction()
-                .replace(R.id.map, fragment)
-                .addToBackStack(null)
-                .commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+        switch(id) {
+            case R.id.nav_first_fragment:
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                break;
+            case R.id.nav_second_fragment:
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                break;
+            case R.id.nav_third_fragment:
+                startActivity(new Intent(MainActivity.this, PreferenceActivity.class));
+                break;
+            default:
+//                fragment = new LoginActivity();
+                break;
+        }
+
+
         return true;
     }
 
 
-    /**
-     * -----------------------------The code below is about the google map action.---------------------------
-     */
+    /**-----------------------------The code below is about the google map action.---------------------------*/
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -315,7 +307,7 @@ public class MainActivity extends AppCompatActivity
                 return;
             }
             default:
-                return;
+                return ;
             // other 'case' lines to check for other
             // permissions this app might request
         }
@@ -412,7 +404,7 @@ public class MainActivity extends AppCompatActivity
             public View getInfoContents(Marker marker) {
                 // Inflate the layouts for the info window, title and snippet.
                 View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
-                        (FrameLayout) findViewById(R.id.map), false);
+                        (FrameLayout)findViewById(R.id.map), false);
 
                 TextView title = ((TextView) infoWindow.findViewById(R.id.title));
                 title.setText(marker.getTitle());
@@ -471,7 +463,7 @@ public class MainActivity extends AppCompatActivity
 
     // Text input and search bar
 
-    private class DyfiAsyncTask extends AsyncTask<String, Void, Direction> {
+    private class DyfiAsyncTask extends AsyncTask<String,Void,Direction> {
         @Override
         protected Direction doInBackground(String... urls) {
             if (urls.length < 1 || urls[0] == null) {
@@ -488,9 +480,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * -----------------------------The code below is about search action.---------------------------
-     */
+    /**-----------------------------The code below is about search action.---------------------------*/
     private void searchClicked() {
         if (isConnectedNetwork(this)) {
             try {
@@ -547,14 +537,12 @@ public class MainActivity extends AppCompatActivity
 
     public static boolean isConnectedNetwork(Context context) {
         ConnectivityManager cm =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
-    /**
-     * -----------------------------The code below is about select time and date.---------------------------
-     */
+    /**-----------------------------The code below is about select time and date.---------------------------*/
 
     public void showTimePickerDialog(View v) {
         DialogFragment newFragment = new TimePickerFragment();
@@ -585,9 +573,7 @@ public class MainActivity extends AppCompatActivity
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             // Do something with the time chosen by the user
             String hour_x = hourOfDay + "";
-            if (hourOfDay < 9) {
-                hour_x = "0" + hourOfDay;
-            }
+            if (hourOfDay   < 9 ){ hour_x  = "0" + hourOfDay;}
 //            Log.i("Selected Time - ",  hour_x + ":" + minute);
             timeString = hour_x + ":" + minute;
             departTiButton.setText(timeString);
@@ -611,16 +597,12 @@ public class MainActivity extends AppCompatActivity
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // Do something with the date chosen by the user
-            String day_x = "" + day, month_x = "" + (month + 1);
-            if (day < 9) {
-                day_x = "0" + day_x;
-            }
-            if (month < 9) {
-                month_x = "0" + month_x;
-            }
+            String day_x = ""+ day, month_x = "" + (month + 1);
+            if (day   < 9 ){ day_x   = "0" + day_x;}
+            if (month < 9 ){ month_x = "0" + month_x;}
             dateString = month_x + "/" + day_x;
             departDaButton.setText(dateString);
-            Log.i("Selected Time - ", dateString);
+            Log.i("Selected Time - ",  dateString);
         }
     }
 
@@ -628,7 +610,7 @@ public class MainActivity extends AppCompatActivity
     public static long convertTime(String dateString, String timeString) {
         long epoch = 0;
         dateString = dateString + "/" + 2017;
-        String time = dateString + " " + timeString + ":00";
+        String time = dateString + " " + timeString+":00";
         Log.i(LOG_TAG, "convert: " + time);
         try {
             epoch = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(time).getTime() / 1000;
@@ -641,7 +623,7 @@ public class MainActivity extends AppCompatActivity
 
     public class CustomOnItemSelectedListener implements OnItemSelectedListener {
 
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+        public void onItemSelected(AdapterView<?> parent, View view, int pos,long id) {
             timeOptions = parent.getItemAtPosition(pos).toString();
         }
 

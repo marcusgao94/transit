@@ -21,6 +21,22 @@ package="com.example.android.bustracker">
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".LoginActivity"
+            android:label="@string/login"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
+        <activity android:name=".PreferenceActivity"
+            android:label="@string/login"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
         <activity android:name=".SearchResultActivity"
             android:label="@string/search_result"
             android:parentActivityName=".MainActivity">
