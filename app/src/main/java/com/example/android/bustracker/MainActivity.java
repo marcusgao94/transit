@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -49,10 +51,15 @@ import com.example.android.bustracker.bus_station.BusStationResponse;
 import com.example.android.bustracker.directions.Direction;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -65,10 +72,14 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PatternItem;
 
+import java.text.DecimalFormat;
+import java.text.Format;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.logging.SimpleFormatter;
 
 public class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,
@@ -137,8 +148,38 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
+        /*----------------------set auto complete fragment------------------------*/
+        final PlaceAutocompleteFragment startFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.type_start);
+        startFragment.setHint("From");
+        startFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                startFragment.setText(place.getAddress());
+            }
+
+            @Override
+            public void onError(Status status) {
+                Log.e(LOG_TAG, "start place selection error");
+            }
+        });
+        final PlaceAutocompleteFragment endFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.type_end);
+        endFragment.setHint("To");
+        endFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                endFragment.setText(place.getAddress());
+            }
+
+            @Override
+            public void onError(Status status) {
+                Log.e(LOG_TAG, "end place selection error");
+            }
+        });
+
         /**After press the search button, the list of buses will be displayed on the screen. */
-        final Button searchButton = (Button)findViewById(R.id.search_button);
+        final Button searchButton = (Button) findViewById(R.id.search_button);
         listView = (ListView) findViewById(R.id.list_view);
 
         timeSpinner = (Spinner) findViewById(R.id.spinner1);
@@ -191,7 +232,9 @@ public class MainActivity extends AppCompatActivity
         mGoogleApiClient.connect();
     }
 
-    /**-----------------------------The code below is about the navigation bar.---------------------------*/
+    /**
+     * -----------------------------The code below is about the navigation bar.---------------------------
+     */
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -231,7 +274,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = null;
-        switch(id) {
+        switch (id) {
             case R.id.nav_first_fragment:
                 fragment = new LoginActivity();
                 break;
@@ -245,14 +288,16 @@ public class MainActivity extends AppCompatActivity
                 fragment = new LoginActivity();
                 break;
         }
-        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.map, fragment).commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
 
-    /**-----------------------------The code below is about the google map action.---------------------------*/
+    /**
+     * -----------------------------The code below is about the google map action.---------------------------
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -269,7 +314,7 @@ public class MainActivity extends AppCompatActivity
                 return;
             }
             default:
-                return ;
+                return;
             // other 'case' lines to check for other
             // permissions this app might request
         }
@@ -281,27 +326,21 @@ public class MainActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
         // request location
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if (mLastLocation == null) {
-                LocationRequest mLocationRequest = LocationRequest.create()
-                        .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                        .setInterval(5000)
-                        .setFastestInterval(1000)
-                        .setMaxWaitTime(5000);
-                LocationServices.FusedLocationApi.requestLocationUpdates(
-                        mGoogleApiClient, mLocationRequest, this);
-            }
-            else {
-                new BusStationAsyncTask().execute(mLastLocation);
-            }
-        }
-        else {
+            LocationRequest mLocationRequest = LocationRequest.create()
+                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                    .setInterval(5000)
+                    .setFastestInterval(1000)
+                    .setMaxWaitTime(5000);
+            LocationServices.FusedLocationApi.requestLocationUpdates(
+                    mGoogleApiClient, mLocationRequest, this);
+            new BusStationAsyncTask().execute(mLastLocation);
+        } else {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
@@ -330,12 +369,85 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        end_name = (EditText)findViewById(R.id.type_end);
-        String text = String.valueOf(latLng.latitude) + "," + latLng.longitude;
-        end_name.setText(text);
+        end_name = (EditText) findViewById(R.id.type_end);
+        Geocoder geocoder = new Geocoder(this, Locale.US);
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            end_name.setText(addresses.get(0).getAddressLine(0));
+        } catch (Exception e) {
+            e.printStackTrace();
+            end_name.setText(String.format("%.6f, %.6f", latLng.latitude, latLng.longitude));
+        }
     }
 
-    private class BusStationAsyncTask extends AsyncTask<Location,Void,BusStationResponse> {
+    @Override
+    public void onLocationChanged(final Location location) {
+        //your code here
+        Log.w(LOG_TAG, "location changed");
+        mLastLocation = location;
+        new BusStationAsyncTask().execute(location);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        mMap.setOnMapLongClickListener(this);
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            // Return null here, so that getInfoContents() is called next.
+            public View getInfoWindow(Marker arg0) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                // Inflate the layouts for the info window, title and snippet.
+                View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
+                        (FrameLayout) findViewById(R.id.map), false);
+
+                TextView title = ((TextView) infoWindow.findViewById(R.id.title));
+                title.setText(marker.getTitle());
+
+                TextView snippet = ((TextView) infoWindow.findViewById(R.id.snippet));
+                snippet.setText(marker.getSnippet());
+
+                return infoWindow;
+            }
+        });
+        updateMap(null);
+    }
+
+    public void updateMap(List<BusStation> busStations) {
+        if (mLastLocation != null) {
+            if (marker != null)
+                marker.remove();
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(mLastLocation.getLatitude(),
+                            mLastLocation.getLongitude()), DEFAULT_ZOOM));
+            if (busStations != null) {
+                for (int i = 0; i < Math.min(3, busStations.size()); i++) {
+                    BusStation bs = busStations.get(i);
+                    mMap.addMarker(new MarkerOptions()
+                            .position(bs.getGeometry().getLocation().toLatLng())
+                            .title(bs.getName()));
+                }
+            }
+
+        } else {
+            Log.w(LOG_TAG, "Current location is null. Using defaults");
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            if (marker != null)
+                marker.remove();
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    mDefaultLocation, DEFAULT_ZOOM));
+        }
+    }
+
+    private class BusStationAsyncTask extends AsyncTask<Location, Void, BusStationResponse> {
         @Override
         protected BusStationResponse doInBackground(Location... locations) {
             if (locations.length < 1 || locations[0] == null) {
@@ -354,84 +466,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onLocationChanged(final Location location) {
-        //your code here
-        Log.w(LOG_TAG, "location changed");
-        mLastLocation = location;
-        new BusStationAsyncTask().execute(location);
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.setOnMapLongClickListener(this);
-        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-            @Override
-            // Return null here, so that getInfoContents() is called next.
-            public View getInfoWindow(Marker arg0) {
-                return null;
-            }
-            @Override
-            public View getInfoContents(Marker marker) {
-                // Inflate the layouts for the info window, title and snippet.
-                View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
-                        (FrameLayout)findViewById(R.id.map), false);
-
-                TextView title = ((TextView) infoWindow.findViewById(R.id.title));
-                title.setText(marker.getTitle());
-
-                TextView snippet = ((TextView) infoWindow.findViewById(R.id.snippet));
-                snippet.setText(marker.getSnippet());
-
-                return infoWindow;
-            }
-        });
-        updateMap(null);
-    }
-
-    public void updateMap(List<BusStation> busStations) {
-        if (mLastLocation != null) {
-            if (marker != null)
-                marker.remove();
-            circle = mMap.addCircle(new CircleOptions()
-                    .center(new LatLng(mLastLocation.getLatitude(),
-                            mLastLocation.getLongitude()))
-                    .radius(20.0)
-                    .fillColor(Color.BLUE)
-                    .strokeWidth(10)
-                    .strokeColor(Color.WHITE));
-
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(mLastLocation.getLatitude(),
-                            mLastLocation.getLongitude()), DEFAULT_ZOOM));
-            mMap.getUiSettings().setMyLocationButtonEnabled(true);
-            if (busStations != null) {
-                for (int i = 0; i < Math.min(3, busStations.size()); i++) {
-                    BusStation bs = busStations.get(i);
-                    mMap.addMarker(new MarkerOptions()
-                            .position(bs.getGeometry().getLocation().toLatLng())
-                            .title(bs.getName()));
-                }
-            }
-
-        } else {
-            Log.w(LOG_TAG, "Current location is null. Using defaults");
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
-            mMap.getUiSettings().setMyLocationButtonEnabled(false);
-            if (marker == null)
-                marker.remove();
-            marker = mMap.addMarker(new MarkerOptions()
-                    .position(mDefaultLocation)
-                    .title("default location"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    mDefaultLocation, DEFAULT_ZOOM));
-        }
-    }
-
     // Text input and search bar
 
-    private class DyfiAsyncTask extends AsyncTask<String,Void,Direction> {
+    private class DyfiAsyncTask extends AsyncTask<String, Void, Direction> {
         @Override
         protected Direction doInBackground(String... urls) {
             if (urls.length < 1 || urls[0] == null) {
@@ -448,15 +485,17 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /**-----------------------------The code below is about search action.---------------------------*/
+    /**
+     * -----------------------------The code below is about search action.---------------------------
+     */
     private void searchClicked() {
         if (isConnectedNetwork(this)) {
             try {
                 Log.i(LOG_TAG, "Connected");
-                start_name = (EditText)findViewById(R.id.type_start);
+                start_name = (EditText) findViewById(R.id.type_start);
                 String start_place = start_name.getText().toString().replace(" ", "+");
 
-                end_name = (EditText)findViewById(R.id.type_end);
+                end_name = (EditText) findViewById(R.id.type_end);
 
                 String end_place = end_name.getText().toString().replace(" ", "+");
                 if (end_place.matches("")) {
@@ -509,12 +548,14 @@ public class MainActivity extends AppCompatActivity
 
     public static boolean isConnectedNetwork(Context context) {
         ConnectivityManager cm =
-                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
-    /**-----------------------------The code below is about select time and date.---------------------------*/
+    /**
+     * -----------------------------The code below is about select time and date.---------------------------
+     */
 
     public void showTimePickerDialog(View v) {
         DialogFragment newFragment = new TimePickerFragment();
@@ -545,7 +586,9 @@ public class MainActivity extends AppCompatActivity
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             // Do something with the time chosen by the user
             String hour_x = hourOfDay + "";
-            if (hourOfDay   < 9 ){ hour_x  = "0" + hourOfDay;}
+            if (hourOfDay < 9) {
+                hour_x = "0" + hourOfDay;
+            }
 //            Log.i("Selected Time - ",  hour_x + ":" + minute);
             timeString = hour_x + ":" + minute;
             departTiButton.setText(timeString);
@@ -569,12 +612,16 @@ public class MainActivity extends AppCompatActivity
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // Do something with the date chosen by the user
-            String day_x = ""+ day, month_x = "" + (month + 1);
-            if (day   < 9 ){ day_x   = "0" + day_x;}
-            if (month < 9 ){ month_x = "0" + month_x;}
+            String day_x = "" + day, month_x = "" + (month + 1);
+            if (day < 9) {
+                day_x = "0" + day_x;
+            }
+            if (month < 9) {
+                month_x = "0" + month_x;
+            }
             dateString = month_x + "/" + day_x;
             departDaButton.setText(dateString);
-            Log.i("Selected Time - ",  dateString);
+            Log.i("Selected Time - ", dateString);
         }
     }
 
@@ -582,7 +629,7 @@ public class MainActivity extends AppCompatActivity
     public static long convertTime(String dateString, String timeString) {
         long epoch = 0;
         dateString = dateString + "/" + 2017;
-        String time = dateString + " " + timeString+":00";
+        String time = dateString + " " + timeString + ":00";
         Log.i(LOG_TAG, "convert: " + time);
         try {
             epoch = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").parse(time).getTime() / 1000;
@@ -592,9 +639,10 @@ public class MainActivity extends AppCompatActivity
         }
         return epoch;
     }
+
     public class CustomOnItemSelectedListener implements OnItemSelectedListener {
 
-        public void onItemSelected(AdapterView<?> parent, View view, int pos,long id) {
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
             timeOptions = parent.getItemAtPosition(pos).toString();
         }
 
