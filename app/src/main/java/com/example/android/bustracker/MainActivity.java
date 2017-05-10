@@ -82,7 +82,7 @@ import java.util.logging.SimpleFormatter;
 public class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks, LocationListener,
-        GoogleMap.OnMapLongClickListener,
+        GoogleMap.OnMapLongClickListener, GoogleMap.OnCameraIdleListener,
         NavigationView.OnNavigationItemSelectedListener {
 
     private static String USGS_REQUEST_URL = "https://maps.googleapis.com/maps/api/directions/json?key=AIzaSyAEBBlM76YfcI7of-9Q5UkTM2O_NBjGaNw";
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient;
     private GoogleMap mMap;
     private final LatLng mDefaultLocation = new LatLng(40.4438, -79.9438);
-    private static final int DEFAULT_ZOOM = 15;
+    private static float ZOOM_LEVEL = 17f;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private boolean mLocationPermissionGranted;
@@ -287,8 +287,6 @@ public class MainActivity extends AppCompatActivity
 //                fragment = new LoginActivity();
                 break;
         }
-
-
         return true;
     }
 
@@ -387,6 +385,8 @@ public class MainActivity extends AppCompatActivity
         new BusStationAsyncTask().execute(location);
     }
 
+
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -428,7 +428,7 @@ public class MainActivity extends AppCompatActivity
             Log.w(LOG_TAG, mLastLocation.toString());
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(mLastLocation.getLatitude(),
-                            mLastLocation.getLongitude()), DEFAULT_ZOOM));
+                            mLastLocation.getLongitude()), ZOOM_LEVEL));
             if (busStations != null) {
                 mMap.clear();
                 for (int i = 0; i < Math.min(3, busStations.size()); i++) {
@@ -441,11 +441,15 @@ public class MainActivity extends AppCompatActivity
 
         } else {
             Log.w(LOG_TAG, "Current location is null. Using defaults");
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    mDefaultLocation, DEFAULT_ZOOM));
+                    mDefaultLocation, ZOOM_LEVEL));
         }
+    }
+
+    @Override
+    public void onCameraIdle() {
+        ZOOM_LEVEL = mMap.getCameraPosition().zoom;
     }
 
     private class BusStationAsyncTask extends AsyncTask<Location, Void, BusStationResponse> {

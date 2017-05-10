@@ -228,7 +228,7 @@ public class RouteDetail extends FragmentActivity
                 bounds.getNortheast().toLatLng());
         int height = (int)(getResources().getDisplayMetrics().heightPixels * 0.5);
         int width = getResources().getDisplayMetrics().widthPixels;
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, height, width, 100));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, height, width, 100));
 //        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds, 100));
     }
 }
