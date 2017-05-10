@@ -382,6 +382,19 @@ public class MainActivity extends AppCompatActivity
         //your code here
         Log.w(LOG_TAG, "location changed");
         mLastLocation = location;
+        Geocoder geocoder = new Geocoder(this, Locale.US);
+        try {
+            Address address = geocoder.getFromLocation(
+                    location.getLatitude(), location.getLongitude(), 1)
+                    .get(0);
+            start_place = address.getAddressLine(0);
+            startFragment.setText(start_place);
+        } catch (Exception e) {
+            e.printStackTrace();
+            start_place = String.format("%.6f, %.6f",
+                    location.getLatitude(), location.getLongitude());
+            endFragment.setText(start_place);
+        }
         new BusStationAsyncTask().execute(location);
     }
 
@@ -450,8 +463,6 @@ public class MainActivity extends AppCompatActivity
                     mDefaultLocation, ZOOM_LEVEL));
         }
     }
-
-
 
     private class BusStationAsyncTask extends AsyncTask<Location, Void, BusStationResponse> {
         @Override
