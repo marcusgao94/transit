@@ -32,9 +32,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
@@ -42,12 +45,13 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.example.android.bustracker.ArrivingBus.Bus;
+example.android.bustracker.ArrivingBus.Bus;
 import com.example.android.bustracker.bus_station.BusStation;
 import com.example.android.bustracker.bus_station.BusStationResponse;
 import com.example.android.bustracker.directions.Direction;
@@ -78,8 +82,6 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.PriorityQueue;
-import java.util.logging.SimpleFormatter;
 
 public class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener,
@@ -95,6 +97,7 @@ public class MainActivity extends AppCompatActivity
     private String start_place, end_place;
     private String url;
     ListView listView;
+    private PopupWindow pw;
     // Record if the leave now, or arrive by, or depart at.
     private String timeOptions;
     private static String timeString;
@@ -207,16 +210,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        /**-----------------------------Add floating button in main Page, to check the upcoming bus.---------------------------*/
-        FloatingActionButton addButton = (FloatingActionButton) findViewById(R.id.add);
 
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, LatestRouteActivity.class);
-                startActivity(intent);
-            }
-        });
 
 
         /**-----------------------------Add Google Map in main page.---------------------------*/
@@ -275,6 +269,7 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
 
         Uri webpage = Uri.parse("http://connectcard.org/nowonline.aspx");
+        Uri privacy = Uri.parse("https://transitapp.com/privacy");
         switch(id) {
             case R.id.nav_first_fragment:
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -284,6 +279,15 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_third_fragment:
                 startActivity(new Intent(MainActivity.this, PreferenceActivity.class));
+                break;
+            case R.id.nav_forth_fragment:
+                initiatePopupWindow();
+                break;
+            case R.id.findUpcoming:
+                startActivity(new Intent(MainActivity.this, LatestRouteActivity.class));
+                break;
+            case R.id.privacy_policy:
+                startActivity(new Intent(Intent.ACTION_VIEW, privacy));
                 break;
             default:
 //                fragment = new LoginActivity();
@@ -666,5 +670,29 @@ public class MainActivity extends AppCompatActivity
             // TODO Auto-generated method stub
         }
 
+    }
+
+    private void initiatePopupWindow() {
+        try {
+            LayoutInflater inflater = (LayoutInflater) MainActivity.this
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View layout = inflater.inflate(R.layout.popup_layout,
+                    (ViewGroup) findViewById(R.id.popup_element));
+            pw = new PopupWindow(layout, 800, 1000, true);
+            pw.showAtLocation(layout, Gravity.CENTER, 0, 0);
+
+            TextView showText = (TextView) layout.findViewById(R.id.popup_window);
+            Button cancelButton = (Button) layout.findViewById(R.id.agree_button);
+            Button cancelButton2 = (Button) layout.findViewById(R.id.disagree_button);
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    pw.dismiss();
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -69,5 +69,8 @@
     <string name="third_radio1">Minimize Walking</string>
     <string name="third_radio2">Less Transfer</string>
 
+    <string name="notification1">"TRNZT" would like to send you notifications</string>
+    <string name="notification2">Notifications may include alerts, sounds, and icon badges. These can be configured in Settings on your device.</string>
+
 
 </resources>
