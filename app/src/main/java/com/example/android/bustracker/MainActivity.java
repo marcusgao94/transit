@@ -258,6 +258,7 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
 
         Uri webpage = Uri.parse("http://connectcard.org/nowonline.aspx");
+        Uri privacy = Uri.parse("https://transitapp.com/privacy");
         switch(id) {
             case R.id.nav_first_fragment:
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -270,6 +271,13 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_forth_fragment:
                 initiatePopupWindow();
+                break;
+            case R.id.findUpcoming:
+                startActivity(new Intent(MainActivity.this, LatestRouteActivity.class));
+                break;
+            case R.id.privacy_policy:
+                startActivity(new Intent(Intent.ACTION_VIEW, privacy));
+                break;
             default:
 //                fragment = new LoginActivity();
                 break;

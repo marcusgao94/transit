@@ -3,6 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/findUpcoming"
+            android:title="Find Upcoming Buses" />
+        <item
             android:id="@+id/nav_first_fragment"
             android:title="@string/nv_first"
             android:checked="true"/>
@@ -18,15 +21,13 @@
             app:showAsAction="always"
             app:actionLayout="@layout/layout_switch"
             />
-        <item
-            android:id="@+id/nav_fifth_fragment"
-            android:title="@string/nv_fifth" />
     </group>
     <item android:title="Others">
         <menu>
             <group android:checkableBehavior="single">
                 <item
-                    android:title="@string/nv_sixth" />
+                    android:title="@string/nv_sixth"
+                    android:id="@+id/privacy_policy"/>
                 <item
                     android:title="@string/nv_seventh" />
             </group>
