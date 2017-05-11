@@ -91,6 +91,13 @@ public class MyAPIClient {
                     bus.setRt(element.getElementsByTagName("rt").item(0).getTextContent());
                     bus.setRtdir(element.getElementsByTagName("rtdir").item(0).getTextContent());
                     bus.setPrdctdn(element.getElementsByTagName("prdctdn").item(0).getTextContent());
+
+                    int t = 0;
+                    String time = bus.getPrdctdn();
+                    if (!time.equals("DUE"))
+                        t = Integer.valueOf(time);
+                    if (t > 10)
+                        continue;
                     busList.add(bus);
                 }
             }
