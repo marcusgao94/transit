@@ -90,12 +90,15 @@ public class MyAPIClient {
                     Bus bus = new Bus();
                     bus.setRt(element.getElementsByTagName("rt").item(0).getTextContent());
                     bus.setRtdir(element.getElementsByTagName("rtdir").item(0).getTextContent());
+                    bus.setDes(element.getElementsByTagName("des").item(0).getTextContent());
                     bus.setPrdctdn(element.getElementsByTagName("prdctdn").item(0).getTextContent());
 
                     int t = 0;
                     String time = bus.getPrdctdn();
                     if (!time.equals("DUE"))
                         t = Integer.valueOf(time);
+                    else
+                        bus.setPrdctdn("0");
                     if (t > 10)
                         continue;
                     busList.add(bus);
