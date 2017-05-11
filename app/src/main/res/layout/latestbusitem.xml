@@ -1,49 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id = "@+id/busList"
-    android:orientation="vertical">
+    android:id = "@+id/busList">
 
-
-
-    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
+    <TextView
+        android:id="@+id/bus_Num"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="2dp"
-        android:stretchColumns="2"
-        android:shrinkColumns="1"
-        android:paddingTop="5dp" android:paddingBottom="5dp">
-        <TableRow
-            android:gravity="center_vertical">
-
-            <TextView
-                android:layout_column="0"
-                android:id="@+id/bus_Num"
-                android:text="5"
-                android:layout_width="80sp"
-                android:gravity="center"
-                android:textColor="@color/edit"
-                style="@style/StopInfoRoute">
-            </TextView>
-            <TextView
-                android:id="@+id/destination"
-                android:layout_column="0"
-                android:layout_width="80sp"
-                android:gravity="center"
-                android:textColor="@color/edit"
-                style="@style/StopInfoRoute">
-            </TextView>
-            <TextView
-                android:id="@+id/arrivalTime"
-                android:layout_column="0"
-                android:layout_width="80sp"
-                android:gravity="center"
-                android:textColor="@color/edit"
-                style="@style/StopInfoRoute">
-            </TextView>
-        </TableRow>
-    </TableLayout>
+        android:layout_alignParentLeft="true"
+        style="@style/StopInfoRoute"
+        android:textColor="@color/edit">
+    </TextView>
+    <TextView
+        android:id="@+id/destination"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/bus_Num"
+        android:padding="40dp"
+        style="@style/StopInfoDestination"
+        android:textColor="@color/edit">
+    </TextView>
+    <TextView
+        android:id="@+id/arrivalTime"
+        style="@style/StopInfoRoute"
+        android:layout_alignParentRight="true"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/edit">
+    </TextView>
 
 
-</LinearLayout>
+</RelativeLayout>

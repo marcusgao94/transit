@@ -51,8 +51,8 @@ public class LatestRouteAdapter extends ArrayAdapter<Bus> {
         departStop.setTypeface(typeface);
 
         TextView arrTime = (TextView) listView.findViewById(R.id.arrivalTime);
-        departStop.setText(bus.getPrdctdn());
-        departStop.setTypeface(typeface);
+        arrTime.setText(bus.getPrdctdn());
+        arrTime.setTypeface(typeface);
         return listView;
     }
 }
