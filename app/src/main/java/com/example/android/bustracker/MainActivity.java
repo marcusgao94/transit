@@ -47,6 +47,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.android.bustracker.ArrivingBus.Bus;
 import com.example.android.bustracker.bus_station.BusStation;
 import com.example.android.bustracker.bus_station.BusStationResponse;
 import com.example.android.bustracker.directions.Direction;
@@ -77,6 +78,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.PriorityQueue;
 import java.util.logging.SimpleFormatter;
 
 public class MainActivity extends AppCompatActivity
@@ -463,6 +465,8 @@ public class MainActivity extends AppCompatActivity
                     mDefaultLocation, ZOOM_LEVEL));
         }
     }
+
+
 
     private class BusStationAsyncTask extends AsyncTask<Location, Void, BusStationResponse> {
         @Override
