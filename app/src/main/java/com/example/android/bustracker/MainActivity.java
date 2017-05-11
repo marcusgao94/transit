@@ -51,7 +51,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-example.android.bustracker.ArrivingBus.Bus;
+import com.example.android.bustracker.ArrivingBus.Bus;
 import com.example.android.bustracker.bus_station.BusStation;
 import com.example.android.bustracker.bus_station.BusStationResponse;
 import com.example.android.bustracker.directions.Direction;
@@ -374,7 +374,7 @@ public class MainActivity extends AppCompatActivity
         try {
             Address address = geocoder
                     .getFromLocation(latLng.latitude, latLng.longitude, 1).get(0);
-            end_place = address.getAddressLine(0);
+            end_place = address.getAddressLine(0) + ", Pittsburgh";
             endFragment.setText(end_place);
         } catch (Exception e) {
             e.printStackTrace();
@@ -383,11 +383,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onLocationChanged(final Location location) {
-        //your code here
-        Log.w(LOG_TAG, "location changed");
-        mLastLocation = location;
+    public void setStart(Location location) {
         Geocoder geocoder = new Geocoder(this, Locale.US);
         try {
             Address address = geocoder.getFromLocation(
@@ -401,6 +397,16 @@ public class MainActivity extends AppCompatActivity
                     location.getLatitude(), location.getLongitude());
             endFragment.setText(start_place);
         }
+    }
+
+    @Override
+    public void onLocationChanged(final Location location) {
+        //your code here
+        Log.w(LOG_TAG, "location changed");
+        if (location.distanceTo(mLastLocation) < 10)
+            return ;
+        mLastLocation = location;
+        setStart(location);
         new BusStationAsyncTask().execute(location);
     }
 
@@ -449,6 +455,7 @@ public class MainActivity extends AppCompatActivity
     public void updateMap(List<BusStation> busStations) {
         if (mLastLocation != null) {
             Log.w(LOG_TAG, mLastLocation.toString());
+            setStart(mLastLocation);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(mLastLocation.getLatitude(),
                             mLastLocation.getLongitude()), ZOOM_LEVEL));
