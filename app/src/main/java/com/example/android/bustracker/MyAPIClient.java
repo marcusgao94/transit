@@ -70,7 +70,7 @@ public class MyAPIClient {
 
     public List<Bus> getArrivingBus(String stpid) {
         String url = "http://realtime.portauthority.org/bustime/api/v3/getpredictions?" +
-                "key=BeDXd3nFDWGXAEH49nKTPv2LR&rtpidatafeed=Port%20Authority%20Bus";
+                "key=BeDXd3nFDWGXAEH49nKTPv2LR&rtpidatafeed=Port Authority Bus";
         URI uri = UriComponentsBuilder.fromHttpUrl(url)
                 .queryParam("stpid", stpid)
                 .build().encode().toUri();
@@ -88,13 +88,9 @@ public class MyAPIClient {
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     Element element = (Element) node;
                     Bus bus = new Bus();
-                    bus.setVid(element.getAttribute("vid"));
-                    bus.setRt(element.getAttribute("rt"));
-                    bus.setRtdir(element.getAttribute("rtdir"));
-                    bus.setDes(element.getAttribute("des"));
-                    bus.setStpid(element.getAttribute("stpid"));
-                    bus.setPrdtm(element.getAttribute("prdtm"));
-                    bus.setPrdctdn(element.getAttribute("prdctdn"));
+                    bus.setRt(element.getElementsByTagName("rt").item(0).getTextContent());
+                    bus.setRtdir(element.getElementsByTagName("rtdir").item(0).getTextContent());
+                    bus.setPrdctdn(element.getElementsByTagName("prdctdn").item(0).getTextContent());
                     busList.add(bus);
                 }
             }

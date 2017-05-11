@@ -668,7 +668,7 @@ public class MainActivity extends AppCompatActivity
 
     public class CustomOnItemSelectedListener implements OnItemSelectedListener {
 
-        public void onItemSelected(AdapterView<?> parent, View view, int pos,long id) {
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
             timeOptions = parent.getItemAtPosition(pos).toString();
         }
 
