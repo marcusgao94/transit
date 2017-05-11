@@ -19,7 +19,7 @@
             android:id="@+id/nav_forth_fragment"
             android:title="@string/nv_forth"
             app:showAsAction="always"
-            app:actionLayout="@layout/layout_switch"
+            android:actionLayout="@layout/layout_switch"
             />
     </group>
     <item android:title="Others">

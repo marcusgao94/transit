@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -17,9 +18,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -38,6 +42,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -46,12 +51,14 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.android.bustracker.ArrivingBus.Bus;
 import com.example.android.bustracker.bus_station.BusStation;
 import com.example.android.bustracker.bus_station.BusStationResponse;
 import com.example.android.bustracker.directions.Direction;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -63,10 +70,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.text.DecimalFormat;
+import java.text.Format;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.List;
@@ -363,7 +374,7 @@ public class MainActivity extends AppCompatActivity
         try {
             Address address = geocoder
                     .getFromLocation(latLng.latitude, latLng.longitude, 1).get(0);
-            end_place = address.getAddressLine(0);
+            end_place = address.getAddressLine(0) + ", Pittsburgh";
             endFragment.setText(end_place);
         } catch (Exception e) {
             e.printStackTrace();
@@ -372,11 +383,30 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void setStart(Location location) {
+        Geocoder geocoder = new Geocoder(this, Locale.US);
+        try {
+            Address address = geocoder.getFromLocation(
+                    location.getLatitude(), location.getLongitude(), 1)
+                    .get(0);
+            start_place = address.getAddressLine(0);
+            startFragment.setText(start_place);
+        } catch (Exception e) {
+            e.printStackTrace();
+            start_place = String.format("%.6f, %.6f",
+                    location.getLatitude(), location.getLongitude());
+            endFragment.setText(start_place);
+        }
+    }
+
     @Override
     public void onLocationChanged(final Location location) {
         //your code here
         Log.w(LOG_TAG, "location changed");
+        if (location.distanceTo(mLastLocation) < 10)
+            return ;
         mLastLocation = location;
+        setStart(location);
         new BusStationAsyncTask().execute(location);
     }
 
@@ -425,6 +455,7 @@ public class MainActivity extends AppCompatActivity
     public void updateMap(List<BusStation> busStations) {
         if (mLastLocation != null) {
             Log.w(LOG_TAG, mLastLocation.toString());
+            setStart(mLastLocation);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(mLastLocation.getLatitude(),
                             mLastLocation.getLongitude()), ZOOM_LEVEL));
@@ -637,7 +668,7 @@ public class MainActivity extends AppCompatActivity
 
     public class CustomOnItemSelectedListener implements OnItemSelectedListener {
 
-        public void onItemSelected(AdapterView<?> parent, View view, int pos,long id) {
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
             timeOptions = parent.getItemAtPosition(pos).toString();
         }
 
