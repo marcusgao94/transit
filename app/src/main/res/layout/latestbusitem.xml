@@ -6,7 +6,7 @@
 
     <TextView
         android:id="@+id/bus_Num"
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         style="@style/StopInfoRoute"
@@ -14,23 +14,35 @@
     </TextView>
     <TextView
         android:id="@+id/destination"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/bus_Num"
-        android:padding="40dp"
+        android:padding="20dp"
         style="@style/StopInfoDestination"
         android:textColor="@color/edit">
     </TextView>
     <TextView
         android:id="@+id/arrivalTime"
         style="@style/StopInfoRoute"
-        android:layout_alignParentRight="true"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
+        android:layout_toRightOf="@+id/destination"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/edit">
-    </TextView>
+        android:textColor="@color/edit"/>
+    <TextView
+        android:id="@+id/eta_min"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:text="min"
+        android:ellipsize="end"
+        android:textColor="@color/edit"
+        android:singleLine="true"
+        android:textIsSelectable="false"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/arrivalTime"
+        android:gravity="bottom"/>
 
 
 </RelativeLayout>

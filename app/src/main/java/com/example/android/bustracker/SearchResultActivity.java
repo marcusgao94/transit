@@ -29,10 +29,8 @@ public class SearchResultActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_results);
 
-        Log.w(LOG_TAG, "here");
         Intent intent = getIntent();
         direction = (Direction) intent.getParcelableExtra("search_result");
-        Log.w(LOG_TAG, "here2");
         lists = direction.getRoutes();
 
         listView = (ListView) findViewById(R.id.list_view);

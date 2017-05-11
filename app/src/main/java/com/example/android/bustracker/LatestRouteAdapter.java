@@ -53,6 +53,16 @@ public class LatestRouteAdapter extends ArrayAdapter<Bus> {
         TextView arrTime = (TextView) listView.findViewById(R.id.arrivalTime);
         arrTime.setText(bus.getPrdctdn());
         arrTime.setTypeface(typeface);
+
+        int resTime = Integer.valueOf(bus.getPrdctdn());
+
+        if (resTime < 5) {
+            listView.setBackgroundResource(R.color.hurry);
+        } else if (resTime > 10) {
+            listView.setBackgroundResource(R.color.calm_down);
+        } else {
+            listView.setBackgroundResource(R.color.prepare);
+        }
         return listView;
     }
 }

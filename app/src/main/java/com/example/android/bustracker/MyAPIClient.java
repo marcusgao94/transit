@@ -4,28 +4,25 @@ import android.location.Location;
 import android.util.Log;
 
 import com.example.android.bustracker.ArrivingBus.Bus;
-import com.example.android.bustracker.bus_station.BusStation;
 import com.example.android.bustracker.bus_station.BusStationResponse;
 import com.example.android.bustracker.directions.Direction;
-import com.example.android.bustracker.directions.Route;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import javax.xml.parsers.*;
-
 import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Created by marcusgao on 2017/5/4.
@@ -99,7 +96,7 @@ public class MyAPIClient {
                         t = Integer.valueOf(time);
                     else
                         bus.setPrdctdn("0");
-                    if (t > 10)
+                    if (t > 15)
                         continue;
                     busList.add(bus);
                 }
