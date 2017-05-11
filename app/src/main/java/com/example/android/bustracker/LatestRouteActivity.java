@@ -59,8 +59,13 @@ public class LatestRouteActivity extends AppCompatActivity {
             Collections.sort(res, new Comparator<Bus>() {
                 @Override
                 public int compare(Bus bus, Bus t1) {
+                    int i1 = 0, i2 = 0;
                     try {
-                        return Integer.valueOf(bus.getPrdctdn()) - Integer.valueOf(t1.getPrdctdn());
+                        if (!bus.getPrdctdn().equals("DUE"))
+                            i1 = Integer.valueOf(bus.getPrdctdn());
+                        if (!t1.getPrdctdn().equals("DUE"))
+                            i2 = Integer.valueOf(t1.getPrdctdn());
+                        return i1 - i2;
                     } catch (Exception e) {
                         return 0;
                     }

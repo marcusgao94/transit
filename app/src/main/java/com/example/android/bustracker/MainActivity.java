@@ -384,19 +384,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void setStart(Location location) {
-        Geocoder geocoder = new Geocoder(this, Locale.US);
-        try {
-            Address address = geocoder.getFromLocation(
-                    location.getLatitude(), location.getLongitude(), 1)
-                    .get(0);
-            start_place = address.getAddressLine(0);
-            startFragment.setText(start_place);
-        } catch (Exception e) {
-            e.printStackTrace();
-            start_place = String.format("%.6f, %.6f",
-                    location.getLatitude(), location.getLongitude());
-            endFragment.setText(start_place);
-        }
+        start_place = "Current Location";
+        startFragment.setText(start_place);
     }
 
     @Override
@@ -507,7 +496,6 @@ public class MainActivity extends AppCompatActivity
                 return null;
             }
             Direction direction = myAPIClient.getDirections(urls[0]);
-
             return direction;
         }
 
@@ -523,7 +511,8 @@ public class MainActivity extends AppCompatActivity
             try {
                 Log.i(LOG_TAG, "Connected");
                 Log.w(LOG_TAG, String.valueOf(R.id.type_start));
-                if (start_place == null || start_place.isEmpty()) {
+                if (start_place == null || start_place.isEmpty() ||
+                        start_place.equals("Current Location")) {
                     if (mLastLocation != null)
                         start_place = String.format("%.6f, %.6f",
                                 mLastLocation.getLatitude(), mLastLocation.getLongitude());
